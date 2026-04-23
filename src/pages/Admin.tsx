@@ -54,9 +54,13 @@ export default function Admin() {
 
   // Галереи материалов
   const [activeMaterialSlug, setActiveMaterialSlug] = useState('derevo');
-  const [materialPhotos, setMaterialPhotos] = useState<{id: number; url: string; caption: string}[]>([]);
+  const [materialPhotos, setMaterialPhotos] = useState<{id: number; url: string; caption: string; price: number; description: string}[]>([]);
   const [photoCaption, setPhotoCaption] = useState('');
+  const [photoPrice, setPhotoPrice] = useState('');
+  const [photoDescription, setPhotoDescription] = useState('');
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [editingPhoto, setEditingPhoto] = useState<{id: number; caption: string; price: number; description: string} | null>(null);
+  const [savingPhoto, setSavingPhoto] = useState(false);
   const materialFileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -142,6 +146,11 @@ export default function Admin() {
   };
 
   // --- Material Photos ---
+  const reloadMaterialPhotos = async () => {
+    const photos = await api.getMaterialPhotos(activeMaterialSlug);
+    if (Array.isArray(photos)) setMaterialPhotos(photos);
+  };
+
   const uploadMaterialPhoto = async () => {
     return new Promise<void>((resolve) => {
       const input = materialFileRef.current!;
@@ -152,11 +161,13 @@ export default function Admin() {
         const reader = new FileReader();
         reader.onload = async () => {
           const base64 = reader.result as string;
-          const res = await api.addMaterialPhoto(activeMaterialSlug, base64, file.type, photoCaption);
+          const price = parseInt(photoPrice) || 0;
+          const res = await api.addMaterialPhoto(activeMaterialSlug, base64, file.type, photoCaption, price, photoDescription);
           if (res.ok) {
-            const photos = await api.getMaterialPhotos(activeMaterialSlug);
-            if (Array.isArray(photos)) setMaterialPhotos(photos);
+            await reloadMaterialPhotos();
             setPhotoCaption('');
+            setPhotoPrice('');
+            setPhotoDescription('');
           }
           setUploadingPhoto(false);
           resolve();
@@ -165,6 +176,19 @@ export default function Admin() {
       };
       input.click();
     });
+  };
+
+  const savePhotoEdit = async () => {
+    if (!editingPhoto) return;
+    setSavingPhoto(true);
+    await api.updateMaterialPhoto(editingPhoto.id, {
+      caption: editingPhoto.caption,
+      price: editingPhoto.price,
+      description: editingPhoto.description,
+    });
+    await reloadMaterialPhotos();
+    setEditingPhoto(null);
+    setSavingPhoto(false);
   };
 
   const deleteMaterialPhoto = async (id: number) => {
@@ -372,24 +396,75 @@ export default function Admin() {
 
             {/* Загрузка нового фото */}
             <div className="bg-stone-800 border border-stone-700 rounded-xl p-5 mb-6">
-              <h3 className="font-semibold mb-3 text-sm text-stone-300">Добавить фото</h3>
-              <div className="flex gap-3 items-center">
+              <h3 className="font-semibold mb-4 text-sm text-stone-300">Добавить фото в галерею</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                 <input
-                  className="input-field flex-1"
-                  placeholder="Подпись к фото (необязательно)"
+                  className="input-field"
+                  placeholder="Название изделия"
                   value={photoCaption}
                   onChange={e => setPhotoCaption(e.target.value)}
                 />
-                <button
-                  onClick={uploadMaterialPhoto}
-                  disabled={uploadingPhoto}
-                  className="bg-amber-700 hover:bg-amber-600 disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 whitespace-nowrap"
-                >
-                  <Icon name="Upload" size={16} />
-                  {uploadingPhoto ? 'Загрузка...' : 'Загрузить фото'}
-                </button>
+                <input
+                  className="input-field"
+                  placeholder="Цена (₽), например 85000"
+                  type="number"
+                  value={photoPrice}
+                  onChange={e => setPhotoPrice(e.target.value)}
+                />
+                <textarea
+                  className="input-field sm:col-span-2 resize-none"
+                  rows={2}
+                  placeholder="Описание изделия (материал, размер, особенности...)"
+                  value={photoDescription}
+                  onChange={e => setPhotoDescription(e.target.value)}
+                />
               </div>
+              <button
+                onClick={uploadMaterialPhoto}
+                disabled={uploadingPhoto}
+                className="bg-amber-700 hover:bg-amber-600 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm flex items-center gap-2"
+              >
+                <Icon name="Upload" size={16} />
+                {uploadingPhoto ? 'Загрузка...' : 'Выбрать и загрузить фото'}
+              </button>
             </div>
+
+            {/* Редактирование фото */}
+            {editingPhoto && (
+              <div className="bg-stone-800 border border-amber-700 rounded-xl p-5 mb-6">
+                <h3 className="font-semibold mb-4 text-sm text-amber-400">Редактировать изделие</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                  <input
+                    className="input-field"
+                    placeholder="Название изделия"
+                    value={editingPhoto.caption}
+                    onChange={e => setEditingPhoto({ ...editingPhoto, caption: e.target.value })}
+                  />
+                  <input
+                    className="input-field"
+                    placeholder="Цена (₽)"
+                    type="number"
+                    value={editingPhoto.price || ''}
+                    onChange={e => setEditingPhoto({ ...editingPhoto, price: parseInt(e.target.value) || 0 })}
+                  />
+                  <textarea
+                    className="input-field sm:col-span-2 resize-none"
+                    rows={2}
+                    placeholder="Описание изделия"
+                    value={editingPhoto.description}
+                    onChange={e => setEditingPhoto({ ...editingPhoto, description: e.target.value })}
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={savePhotoEdit} disabled={savingPhoto} className="bg-amber-700 hover:bg-amber-600 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm">
+                    {savingPhoto ? 'Сохраняю...' : 'Сохранить'}
+                  </button>
+                  <button onClick={() => setEditingPhoto(null)} className="bg-stone-700 hover:bg-stone-600 text-white px-5 py-2 rounded-lg text-sm">
+                    Отмена
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Сетка фото */}
             {materialPhotos.length === 0 ? (
@@ -397,17 +472,27 @@ export default function Admin() {
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {materialPhotos.map(photo => (
-                  <div key={photo.id} className="relative group rounded-lg overflow-hidden bg-stone-800">
-                    <img src={photo.url} alt={photo.caption} className="w-full h-40 object-cover" />
-                    {photo.caption && (
-                      <p className="px-3 py-2 text-xs text-stone-300 truncate">{photo.caption}</p>
-                    )}
-                    <button
-                      onClick={() => deleteMaterialPhoto(photo.id)}
-                      className="absolute top-2 right-2 bg-red-900 hover:bg-red-700 text-white rounded-full w-7 h-7 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <Icon name="X" size={14} />
-                    </button>
+                  <div key={photo.id} className="relative group rounded-lg overflow-hidden bg-stone-800 border border-stone-700">
+                    <img src={photo.url} alt={photo.caption} className="w-full h-36 object-cover" />
+                    <div className="p-2">
+                      {photo.caption && <p className="text-xs text-stone-200 font-medium truncate">{photo.caption}</p>}
+                      {photo.price > 0 && <p className="text-xs text-amber-400">{photo.price.toLocaleString()} ₽</p>}
+                      {photo.description && <p className="text-xs text-stone-500 truncate mt-0.5">{photo.description}</p>}
+                    </div>
+                    <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => setEditingPhoto({ id: photo.id, caption: photo.caption, price: photo.price, description: photo.description })}
+                        className="bg-stone-800 hover:bg-amber-700 text-white rounded-full w-7 h-7 flex items-center justify-center"
+                      >
+                        <Icon name="Pencil" size={12} />
+                      </button>
+                      <button
+                        onClick={() => deleteMaterialPhoto(photo.id)}
+                        className="bg-red-900 hover:bg-red-700 text-white rounded-full w-7 h-7 flex items-center justify-center"
+                      >
+                        <Icon name="X" size={12} />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

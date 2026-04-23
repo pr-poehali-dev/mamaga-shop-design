@@ -58,8 +58,11 @@ export const api = {
   getMaterialPhotos: (slug: string) =>
     fetch(`${URLS.misc}?action=material_photos&slug=${slug}`).then(r => r.json()),
 
-  addMaterialPhoto: (slug: string, image: string, content_type: string, caption: string) =>
-    fetch(`${URLS.misc}?action=add_material_photo`, { method: 'POST', headers: authHeaders(), body: JSON.stringify({ slug, image, content_type, caption }) }).then(r => r.json()),
+  addMaterialPhoto: (slug: string, image: string, content_type: string, caption: string, price: number, description: string) =>
+    fetch(`${URLS.misc}?action=add_material_photo`, { method: 'POST', headers: authHeaders(), body: JSON.stringify({ slug, image, content_type, caption, price, description }) }).then(r => r.json()),
+
+  updateMaterialPhoto: (id: number, data: { caption: string; price: number; description: string }) =>
+    fetch(`${URLS.misc}?action=material_photo&id=${id}`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(data) }).then(r => r.json()),
 
   deleteMaterialPhoto: (id: number) =>
     fetch(`${URLS.misc}?action=material_photo&id=${id}`, { method: 'DELETE', headers: authHeaders() }).then(r => r.json()),

@@ -20,7 +20,7 @@ def handler(event: dict, context) -> dict:
     """Настройки сайта, загрузка изображений и управление галереями материалов"""
     cors_headers = {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, X-Authorization',
     }
 
@@ -46,12 +46,12 @@ def handler(event: dict, context) -> dict:
         conn = get_db()
         cur = conn.cursor()
         cur.execute(
-            "SELECT id, url, caption, sort_order FROM material_photos WHERE material_slug = %s ORDER BY sort_order, id",
+            "SELECT id, url, caption, sort_order, price, description FROM material_photos WHERE material_slug = %s ORDER BY sort_order, id",
             (slug,)
         )
         rows = cur.fetchall()
         conn.close()
-        photos = [{'id': r[0], 'url': r[1], 'caption': r[2], 'sort_order': r[3]} for r in rows]
+        photos = [{'id': r[0], 'url': r[1], 'caption': r[2], 'sort_order': r[3], 'price': r[4] or 0, 'description': r[5] or ''} for r in rows]
         return {'statusCode': 200, 'headers': cors_headers, 'body': json.dumps(photos)}
 
     if not check_auth(event):
@@ -104,6 +104,8 @@ def handler(event: dict, context) -> dict:
         image_data = body.get('image')
         content_type = body.get('content_type', 'image/jpeg')
         caption = body.get('caption', '')
+        price = body.get('price', 0) or 0
+        description = body.get('description', '') or ''
 
         if not slug or not image_data:
             return {'statusCode': 400, 'headers': cors_headers, 'body': json.dumps({'error': 'Нет slug или изображения'})}
@@ -129,14 +131,34 @@ def handler(event: dict, context) -> dict:
         conn = get_db()
         cur = conn.cursor()
         cur.execute(
-            "INSERT INTO material_photos (material_slug, url, caption) VALUES (%s, %s, %s) RETURNING id",
-            (slug, cdn_url, caption)
+            "INSERT INTO material_photos (material_slug, url, caption, price, description) VALUES (%s, %s, %s, %s, %s) RETURNING id",
+            (slug, cdn_url, caption, price, description)
         )
         new_id = cur.fetchone()[0]
         conn.commit()
         conn.close()
 
         return {'statusCode': 200, 'headers': cors_headers, 'body': json.dumps({'ok': True, 'id': new_id, 'url': cdn_url})}
+
+    # PUT обновить поля фото материала (цена, описание, подпись)
+    if event.get('httpMethod') == 'PUT' and action == 'material_photo':
+        photo_id = params.get('id')
+        if not photo_id:
+            return {'statusCode': 400, 'headers': cors_headers, 'body': json.dumps({'error': 'Нет id'})}
+
+        caption = body.get('caption', '')
+        price = body.get('price', 0) or 0
+        description = body.get('description', '') or ''
+
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE material_photos SET caption=%s, price=%s, description=%s WHERE id=%s",
+            (caption, price, description, photo_id)
+        )
+        conn.commit()
+        conn.close()
+        return {'statusCode': 200, 'headers': cors_headers, 'body': json.dumps({'ok': True})}
 
     # DELETE удалить фото материала
     if event.get('httpMethod') == 'DELETE' and action == 'material_photo':

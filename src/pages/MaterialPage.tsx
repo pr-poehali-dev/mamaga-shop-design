@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Icon from "@/components/ui/icon";
 import { api } from "@/lib/api";
+import Icon from "@/components/ui/icon";
+import PassportCard from "@/components/PassportCard";
 
 interface Photo {
   id: number;
   url: string;
   caption: string;
+  price: number;
+  description: string;
 }
 
 interface MaterialConfig {
@@ -76,7 +79,7 @@ export default function MaterialPage({ materialSlug }: MaterialPageProps) {
   const navigate = useNavigate();
   const material = MATERIALS[materialSlug];
   const [photos, setPhotos] = useState<Photo[]>([]);
-  const [lightbox, setLightbox] = useState<Photo | null>(null);
+  const [passport, setPassport] = useState<Photo | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -171,23 +174,27 @@ export default function MaterialPage({ materialSlug }: MaterialPageProps) {
                   key={photo.id}
                   className="break-inside-avoid cursor-pointer group relative overflow-hidden"
                   style={{ borderRadius: "2px" }}
-                  onClick={() => setLightbox(photo)}
+                  onClick={() => setPassport(photo)}
                 >
                   <img
                     src={photo.url}
                     alt={photo.caption}
                     className="w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                  {photo.caption && (
-                    <div
-                      className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300"
-                      style={{ background: "linear-gradient(to top, rgba(13,11,8,0.95), transparent)" }}
-                    >
-                      <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "0.95rem", color: "var(--cream)", fontStyle: "italic" }}>
-                        {photo.caption}
-                      </p>
-                    </div>
-                  )}
+                  <div
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2"
+                    style={{ background: "rgba(13,11,8,0.6)" }}
+                  >
+                    <span style={{ fontFamily: "serif", fontSize: "1.8rem", color: "var(--gold)" }}>{material.rune}</span>
+                    <span style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--cream)", border: "1px solid rgba(201,168,76,0.4)", padding: "6px 14px", borderRadius: "2px" }}>
+                      Паспорт изделия
+                    </span>
+                    {photo.price > 0 && (
+                      <span style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.2rem", color: "var(--gold)" }}>
+                        {photo.price.toLocaleString("ru-RU")} ₽
+                      </span>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -213,29 +220,21 @@ export default function MaterialPage({ materialSlug }: MaterialPageProps) {
         </div>
       </section>
 
-      {/* Lightbox */}
-      {lightbox && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ background: "rgba(0,0,0,0.92)", backdropFilter: "blur(8px)" }}
-          onClick={() => setLightbox(null)}
-        >
-          <button
-            className="absolute top-6 right-6"
-            style={{ color: "var(--cream-muted)", background: "none", border: "none", cursor: "pointer" }}
-            onClick={() => setLightbox(null)}
-          >
-            <Icon name="X" size={28} />
-          </button>
-          <div onClick={e => e.stopPropagation()} className="max-w-4xl w-full">
-            <img src={lightbox.url} alt={lightbox.caption} className="w-full max-h-[80vh] object-contain" style={{ borderRadius: "2px" }} />
-            {lightbox.caption && (
-              <p className="text-center mt-4" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1rem", color: "var(--cream-muted)", fontStyle: "italic" }}>
-                {lightbox.caption}
-              </p>
-            )}
-          </div>
-        </div>
+      {passport && (
+        <PassportCard
+          image={passport.url}
+          title={passport.caption || material.name}
+          description={passport.description}
+          price={passport.price}
+          material={material.name}
+          rune={material.rune}
+          onClose={() => setPassport(null)}
+          onContact={() => {
+            setPassport(null);
+            navigate("/");
+            setTimeout(() => { const el = document.getElementById("Контакты"); if (el) el.scrollIntoView({ behavior: "smooth" }); }, 200);
+          }}
+        />
       )}
     </div>
   );

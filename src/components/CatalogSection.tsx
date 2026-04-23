@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import PassportCard from '@/components/PassportCard';
 
 const WOOD_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/0b859a9e-8cca-4712-9284-c6b9628bb842.jpg";
 const MARBLE_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/d50a62b6-2324-4f9c-b1c6-4861301cdfe6.jpg";
 const HERO_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/e93c2ccd-1cf6-4059-82f1-e74aab891821.jpg";
 
 const FALLBACK_PRODUCTS = [
-  { id: 1, title: "Столешница из слэба ореха", material: "дерево", style: "лофт", price: 85000, image_url: WOOD_IMAGE },
-  { id: 2, title: "Столешница из мрамора Calacatta", material: "камень", style: "классика", price: 140000, image_url: MARBLE_IMAGE },
-  { id: 3, title: "Подстолье из кованого металла", material: "металл", style: "лофт", price: 45000, image_url: HERO_IMAGE },
-  { id: 4, title: "Полка из массива дуба", material: "дерево", style: "минимализм", price: 28000, image_url: WOOD_IMAGE },
-  { id: 5, title: "Столешница из гранита", material: "камень", style: "классика", price: 95000, image_url: MARBLE_IMAGE },
-  { id: 6, title: "Экран из латуни и стали", material: "металл", style: "арт-деко", price: 62000, image_url: HERO_IMAGE },
+  { id: 1, title: "Столешница из слэба ореха", description: "Живая текстура грецкого ореха, пропитка маслом, уникальный рисунок.", material: "дерево", style: "лофт", price: 85000, image_url: WOOD_IMAGE },
+  { id: 2, title: "Столешница из мрамора Calacatta", description: "Итальянский мрамор с золотистыми прожилками. Полировка зеркало.", material: "камень", style: "классика", price: 140000, image_url: MARBLE_IMAGE },
+  { id: 3, title: "Подстолье из кованого металла", description: "Ручная ковка, патинирование, матовое покрытие воском.", material: "металл", style: "лофт", price: 45000, image_url: HERO_IMAGE },
+  { id: 4, title: "Полка из массива дуба", description: "Дуб 50 мм, масло-воск, скрытый крепёж. Выдерживает до 80 кг.", material: "дерево", style: "минимализм", price: 28000, image_url: WOOD_IMAGE },
+  { id: 5, title: "Столешница из гранита", description: "Гранит Абсолют Блэк, полировка, кромка 45°. Толщина 30 мм.", material: "камень", style: "классика", price: 95000, image_url: MARBLE_IMAGE },
+  { id: 6, title: "Экран из латуни и стали", description: "Комбинация латуни и вороненой стали. Размер под заказ.", material: "металл", style: "арт-деко", price: 62000, image_url: HERO_IMAGE },
 ];
 
 const PRICE_RANGES = [
@@ -33,6 +33,7 @@ interface CatalogSectionProps {
 interface Product {
   id: number;
   title: string;
+  description?: string;
   material: string;
   style: string;
   price: number;
@@ -40,8 +41,8 @@ interface Product {
 }
 
 export default function CatalogSection({ materialFilter, setMaterialFilter, styleFilter, setStyleFilter, priceFilter, setPriceFilter }: CatalogSectionProps) {
-  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>(FALLBACK_PRODUCTS);
+  const [passport, setPassport] = useState<Product | null>(null);
 
   useEffect(() => {
     fetch('https://functions.poehali.dev/dbf58220-06f5-4ed4-a81f-28376a0939fe')
@@ -60,6 +61,11 @@ export default function CatalogSection({ materialFilter, setMaterialFilter, styl
     const priceOk = !range || (p.price >= range.min && p.price <= range.max);
     return matOk && styleOk && priceOk;
   });
+
+  const scrollToContacts = () => {
+    const el = document.getElementById("Контакты");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <section id="Каталог" className="py-24" style={{ background: "var(--dark-2)" }}>
@@ -113,9 +119,21 @@ export default function CatalogSection({ materialFilter, setMaterialFilter, styl
               <p className="mt-2" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.7rem", letterSpacing: "0.1em" }}>Попробуйте изменить фильтры</p>
             </div>
           ) : filteredProducts.map((p) => (
-            <div key={p.id} className="product-card group relative" style={{ background: "var(--dark-3)", borderRadius: "2px", overflow: "hidden", border: "1px solid rgba(201,168,76,0.08)" }}>
-              <div className="h-56 overflow-hidden">
-                <img src={p.image_url} alt={p.title} className="w-full h-full object-cover" />
+            <div
+              key={p.id}
+              className="product-card group relative cursor-pointer"
+              style={{ background: "var(--dark-3)", borderRadius: "2px", overflow: "hidden", border: "1px solid rgba(201,168,76,0.08)", transition: "border-color 0.3s" }}
+              onClick={() => setPassport(p)}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.35)")}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.08)")}
+            >
+              <div className="h-56 overflow-hidden relative">
+                <img src={p.image_url} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center" style={{ background: "rgba(13,11,8,0.5)" }}>
+                  <span style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", border: "1px solid rgba(201,168,76,0.5)", padding: "8px 16px", borderRadius: "2px" }}>
+                    Паспорт изделия
+                  </span>
+                </div>
               </div>
               <div className="p-6">
                 <div className="flex items-center gap-2 mb-2">
@@ -128,15 +146,29 @@ export default function CatalogSection({ materialFilter, setMaterialFilter, styl
                   <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.4rem", color: "var(--gold)", fontWeight: 300 }}>
                     {p.price ? `${p.price.toLocaleString("ru-RU")} ₽` : 'по запросу'}
                   </p>
-                  <button onClick={() => { const el = document.getElementById("Контакты"); if (el) el.scrollIntoView({ behavior: "smooth" }); else navigate("/"); }} className="btn-outline-gold px-4 py-2 cursor-pointer flex items-center gap-2" style={{ borderRadius: "2px", fontSize: "0.6rem" }}>
-                    <span style={{ fontFamily: "serif", fontSize: "0.9rem" }}>ᛏ</span> Узнать цену
-                  </button>
+                  <span style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.58rem", letterSpacing: "0.12em", color: "var(--cream-muted)", textTransform: "uppercase" }}>
+                    подробнее →
+                  </span>
                 </div>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {passport && (
+        <PassportCard
+          image={passport.image_url}
+          title={passport.title}
+          description={passport.description || ''}
+          price={passport.price}
+          material={passport.material}
+          style={passport.style}
+          rune="ᚱ"
+          onClose={() => setPassport(null)}
+          onContact={() => { setPassport(null); setTimeout(scrollToContacts, 100); }}
+        />
+      )}
     </section>
   );
 }
