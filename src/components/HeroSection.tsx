@@ -124,17 +124,16 @@ export default function HeroSection({ scrollTo }: HeroSectionProps) {
       {/* Основной контент */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-24 grid lg:grid-cols-2 gap-16 items-center">
         <div>
-          <p className="section-label mb-6 animate-fade-in-up" style={{ opacity: 0, animationFillMode: "forwards" }}>Мастерская природных материалов</p>
+          <p className="section-label mb-6 animate-fade-in-up" style={{ opacity: 0, animationFillMode: "forwards" }}>Корнепластика · Дерево · Камень · Железо</p>
           <h1 className="animate-fade-in-up delay-100" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(3rem, 6vw, 5.5rem)", lineHeight: 1.05, fontWeight: 300, opacity: 0, animationFillMode: "forwards" }}>
-            Красота,<br />
-            <span className="gold-shimmer">рождённая</span><br />
-            природой
+            Там, где<br />
+            <span className="gold-shimmer">стихии</span><br />
+            сплетаются
           </h1>
           <div className="gold-line my-8 animate-fade-in-up delay-200" style={{ opacity: 0, animationFillMode: "forwards" }} />
-          <p className="animate-fade-in-up delay-300 leading-relaxed" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.05rem", color: "var(--cream-muted)", maxWidth: "420px", opacity: 0, animationFillMode: "forwards", fontStyle: "italic", lineHeight: 1.8 }}>
-            Говорят, леший отдаёт дерево лишь тому, кто слышит лес.<br />
-            Каменный великан — только тому, кто чтит горы.<br />
-            <span style={{ fontStyle: "normal", fontSize: "0.85rem", letterSpacing: "0.05em" }}>Мы слышим. Мы чтим. Мы создаём.</span>
+          <p className="animate-fade-in-up delay-300 leading-relaxed" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.1rem", color: "var(--cream-muted)", maxWidth: "440px", opacity: 0, animationFillMode: "forwards", fontStyle: "italic", lineHeight: 2 }}>
+            Дерево помнит бурю. Камень — вечность.<br />Железо — волю того, кто держал его в огне.<br />
+            <span style={{ fontStyle: "normal", fontSize: "0.8rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--gold)", opacity: 0.7 }}>Мы соединяем всё троё.</span>
           </p>
           <div className="flex flex-wrap gap-4 mt-10 animate-fade-in-up delay-400" style={{ opacity: 0, animationFillMode: "forwards" }}>
             <button className="btn-gold px-8 py-4 cursor-pointer flex items-center gap-3" style={{ borderRadius: "2px" }} onClick={() => scrollTo("Каталог")}>

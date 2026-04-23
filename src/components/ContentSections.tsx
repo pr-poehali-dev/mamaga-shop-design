@@ -6,9 +6,9 @@ const WOOD_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174
 const MARBLE_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/61cb8446-b721-49a6-a9ad-db0ba501bd03.jpg";
 
 const MATERIALS = [
-  { name: "Дерево", desc: "Слэбы, массив, шпон. Дуб, орех, ясень, карагач — каждое изделие уникально, как сама природа.", icon: "🌳" },
-  { name: "Металл", desc: "Сталь, медь, латунь, бронза. Кованные и литые элементы с ручной патиной и полировкой.", icon: "⚙️" },
-  { name: "Камень", desc: "Мрамор, гранит, оникс, сланец. Природные блоки с минимальной обработкой для максимальной выразительности.", icon: "🪨" },
+  { name: "Дерево", desc: "Срубить дерево — легко. Услышать, что оно хочет стать — вот искусство. Дуб, орех, карагач: каждый слэб — это рукопись, написанная веками.", icon: "🌳" },
+  { name: "Железо", desc: "Металл не терпит слабых рук. Но тому, кто умеет держать огонь — он подчиняется как вода. Латунь, сталь, бронза: жёсткость снаружи, душа внутри.", icon: "⚙️" },
+  { name: "Камень", desc: "Камень молчит тысячелетиями. Но однажды — раскалывается, и внутри оказывается то, чего не видел ни один глаз. Мрамор, оникс, гранит: красота, которую нельзя придумать.", icon: "🪨" },
 ];
 
 const MYTHS = [
@@ -76,11 +76,14 @@ export default function ContentSections({ scrollTo }: ContentSectionsProps) {
       <section id="О материалах" className="py-24" style={{ background: "var(--dark)" }}>
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col items-center mb-16">
-            <p className="section-label mb-4">Наша философия</p>
+            <p className="section-label mb-4">Три стихии · Одна воля</p>
             <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 300, textAlign: "center" }}>
               О материалах
             </h2>
             <div className="gold-line mt-5" />
+            <p className="mt-6" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.05rem", fontStyle: "italic", color: "var(--cream-muted)", textAlign: "center", maxWidth: "520px", lineHeight: 1.9 }}>
+              «Не спрашивай, из чего сделан мир — спроси, кто решился его тронуть.»
+            </p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
@@ -105,16 +108,16 @@ export default function ContentSections({ scrollTo }: ContentSectionsProps) {
               <div className="absolute inset-0" style={{ background: "rgba(13,11,8,0.4)" }} />
             </div>
             <div className="p-12 flex flex-col justify-center" style={{ background: "var(--dark-3)" }}>
-              <p className="section-label mb-6">Наш подход</p>
+              <p className="section-label mb-6">Корнепластика</p>
               <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "2rem", fontWeight: 300, lineHeight: 1.2 }}>
-                Минимальная обработка — максимальная красота
+                Там, где дерево встречает камень — рождается третье
               </h3>
               <div className="gold-line my-6" />
-              <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.8rem", lineHeight: 1.9, color: "var(--cream-muted)" }}>
-                Мы убеждены: природа создаёт лучший дизайн. Наша задача — бережно раскрыть красоту материала, сохранить его живые линии и текстуры, а не скрыть их под слоями лака.
+              <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1rem", lineHeight: 2, color: "var(--cream-muted)", fontStyle: "italic" }}>
+                «Вино не знает, из какой лозы оно вышло. Но тот, кто пьёт — чувствует землю, солнце и время.»
               </p>
-              <p className="mt-4" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.8rem", lineHeight: 1.9, color: "var(--cream-muted)" }}>
-                Каждый слэб — уникален. Каждое изделие — единственное в мире.
+              <p className="mt-5" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.78rem", lineHeight: 1.9, color: "var(--cream-muted)" }}>
+                Корнепластика — это не стиль. Это философия: дерево, железо и камень не соединяются — они срастаются, как срастаются корни разных деревьев под землёй. Каждое изделие — живой организм из трёх стихий.
               </p>
             </div>
           </div>
@@ -249,8 +252,9 @@ export default function ContentSections({ scrollTo }: ContentSectionsProps) {
           </div>
 
           <div className="mt-16 p-10 text-center" style={{ border: "1px solid rgba(201,168,76,0.2)", borderRadius: "2px", background: "rgba(201,168,76,0.03)" }}>
-            <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "2rem", fontWeight: 300 }}>Готовы обсудить ваш проект?</h3>
-            <p className="mt-4 mb-8" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.8rem", color: "var(--cream-muted)" }}>Расскажите нам о своей идее — мы предложим оптимальное решение и материалы</p>
+            <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "2rem", fontWeight: 300 }}>У каждой идеи есть материал, который её ждёт</h3>
+            <p className="mt-4 mb-2" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1rem", color: "var(--cream-muted)", fontStyle: "italic" }}>«Глина не просит гончара. Но гончар всегда приходит.»</p>
+            <p className="mt-3 mb-8" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.75rem", color: "var(--cream-muted)", letterSpacing: "0.05em" }}>Расскажите, что вы чувствуете — мы найдём стихию, которая это выразит</p>
             <button className="btn-gold px-10 py-4 cursor-pointer flex items-center gap-3" style={{ borderRadius: "2px" }} onClick={() => scrollTo("Контакты")}>
               <span style={{ fontFamily: "serif", fontSize: "1.1rem" }}>ᚢ</span> Получить консультацию
             </button>
