@@ -172,8 +172,7 @@ export default function ContentSections({ scrollTo }: ContentSectionsProps) {
                       {isOpen ? myth.story : preview}
                     </p>
 
-                    {/* Раскрытая часть */}
-                    <div style={{ overflow: "hidden", maxHeight: isOpen ? "0px" : "0px", transition: "max-height 0.5s ease" }} />
+                    {/* Раскрытая часть — убрана дублирующая div, текст отображается выше */}
 
                     {/* Кнопка */}
                     <button
@@ -212,8 +211,8 @@ export default function ContentSections({ scrollTo }: ContentSectionsProps) {
                   <span style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", color: "var(--gold)", textTransform: "uppercase" }}>{item.tag}</span>
                   <h3 className="mt-2" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.4rem", fontWeight: 400 }}>{item.title}</h3>
                   <p className="mt-1" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.75rem", color: "var(--cream-muted)", lineHeight: 1.6 }}>{item.desc}</p>
-                  <button className="mt-5 flex items-center gap-2 nav-link" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--gold)", background: "none", border: "none", cursor: "pointer" }}>
-                    <span style={{ fontFamily: "serif", fontSize: "1rem" }}>ᚦ</span> Смотреть проект
+                  <button onClick={() => scrollTo("Контакты")} className="mt-5 flex items-center gap-2 nav-link" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--gold)", background: "none", border: "none", cursor: "pointer" }}>
+                    <span style={{ fontFamily: "serif", fontSize: "1rem" }}>ᚦ</span> Обсудить проект
                   </button>
                 </div>
               </div>
@@ -221,8 +220,8 @@ export default function ContentSections({ scrollTo }: ContentSectionsProps) {
           </div>
 
           <div className="text-center mt-12">
-            <button className="btn-outline-gold px-10 py-4 cursor-pointer flex items-center gap-3" style={{ borderRadius: "2px" }}>
-              <span style={{ fontFamily: "serif", fontSize: "1.1rem" }}>ᚷ</span> Все проекты
+            <button onClick={() => scrollTo("Контакты")} className="btn-outline-gold px-10 py-4 cursor-pointer flex items-center gap-3 mx-auto" style={{ borderRadius: "2px" }}>
+              <span style={{ fontFamily: "serif", fontSize: "1.1rem" }}>ᚷ</span> Обсудить ваш проект
             </button>
           </div>
         </div>

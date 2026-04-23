@@ -3,8 +3,15 @@
     {
       "name": "Get settings",
       "method": "GET",
-      "path": "/",
+      "path": "/?action=settings",
       "expectedStatus": 200
+    },
+    {
+      "name": "Get material photos",
+      "method": "GET",
+      "path": "/?action=material_photos&slug=derevo",
+      "expectedStatus": 200,
+      "bodyMatcher": "partial"
     }
   ]
 }

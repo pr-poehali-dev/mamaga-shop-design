@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const WOOD_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/0b859a9e-8cca-4712-9284-c6b9628bb842.jpg";
 const MARBLE_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/d50a62b6-2324-4f9c-b1c6-4861301cdfe6.jpg";
@@ -39,6 +40,7 @@ interface Product {
 }
 
 export default function CatalogSection({ materialFilter, setMaterialFilter, styleFilter, setStyleFilter, priceFilter, setPriceFilter }: CatalogSectionProps) {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>(FALLBACK_PRODUCTS);
 
   useEffect(() => {
@@ -126,8 +128,8 @@ export default function CatalogSection({ materialFilter, setMaterialFilter, styl
                   <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.4rem", color: "var(--gold)", fontWeight: 300 }}>
                     {p.price ? `${p.price.toLocaleString("ru-RU")} ₽` : 'по запросу'}
                   </p>
-                  <button className="btn-outline-gold px-4 py-2 cursor-pointer flex items-center gap-2" style={{ borderRadius: "2px", fontSize: "0.6rem" }}>
-                    <span style={{ fontFamily: "serif", fontSize: "0.9rem" }}>ᛏ</span> Подробнее
+                  <button onClick={() => { const el = document.getElementById("Контакты"); if (el) el.scrollIntoView({ behavior: "smooth" }); else navigate("/"); }} className="btn-outline-gold px-4 py-2 cursor-pointer flex items-center gap-2" style={{ borderRadius: "2px", fontSize: "0.6rem" }}>
+                    <span style={{ fontFamily: "serif", fontSize: "0.9rem" }}>ᛏ</span> Узнать цену
                   </button>
                 </div>
               </div>

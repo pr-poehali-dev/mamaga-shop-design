@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "@/components/ui/icon";
+import { api } from "@/lib/api";
 
 interface Photo {
   id: number;
@@ -79,10 +80,9 @@ export default function MaterialPage({ materialSlug }: MaterialPageProps) {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const saved = localStorage.getItem(`material_photos_${materialSlug}`);
-    if (saved) {
-      try { setPhotos(JSON.parse(saved)); } catch (e) { console.error(e); }
-    }
+    api.getMaterialPhotos(materialSlug).then(data => {
+      if (Array.isArray(data)) setPhotos(data);
+    });
   }, [materialSlug]);
 
   if (!material) {

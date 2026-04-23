@@ -3,7 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { api, TOKEN_KEY } from '@/lib/api';
 import Icon from '@/components/ui/icon';
 
-type Tab = 'products' | 'blog' | 'settings';
+type Tab = 'products' | 'blog' | 'materials' | 'settings';
+
+const MATERIAL_SLUGS = [
+  { slug: 'derevo', name: 'Дерево', rune: 'ᚦ' },
+  { slug: 'zhelezo', name: 'Железо', rune: 'ᚢ' },
+  { slug: 'kamen', name: 'Камень', rune: 'ᚱ' },
+  { slug: 'korneplastika', name: 'Корнепластика', rune: 'ᚹ' },
+];
 
 interface Product {
   id: number;
@@ -45,12 +52,27 @@ export default function Admin() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadTarget, setUploadTarget] = useState<'product' | 'post'>('product');
 
+  // Галереи материалов
+  const [activeMaterialSlug, setActiveMaterialSlug] = useState('derevo');
+  const [materialPhotos, setMaterialPhotos] = useState<{id: number; url: string; caption: string}[]>([]);
+  const [photoCaption, setPhotoCaption] = useState('');
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const materialFileRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     api.checkAuth().then(res => {
       if (!res.ok) { navigate('/admin/login'); return; }
       loadAll();
     });
   }, []);
+
+  useEffect(() => {
+    if (tab === 'materials') {
+      api.getMaterialPhotos(activeMaterialSlug).then(data => {
+        if (Array.isArray(data)) setMaterialPhotos(data);
+      });
+    }
+  }, [tab, activeMaterialSlug]);
 
   const loadAll = async () => {
     setLoading(true);
@@ -119,6 +141,38 @@ export default function Admin() {
     setPosts(posts.filter(p => p.id !== id));
   };
 
+  // --- Material Photos ---
+  const uploadMaterialPhoto = async () => {
+    return new Promise<void>((resolve) => {
+      const input = materialFileRef.current!;
+      input.onchange = async () => {
+        const file = input.files?.[0];
+        if (!file) return resolve();
+        setUploadingPhoto(true);
+        const reader = new FileReader();
+        reader.onload = async () => {
+          const base64 = reader.result as string;
+          const res = await api.addMaterialPhoto(activeMaterialSlug, base64, file.type, photoCaption);
+          if (res.ok) {
+            const photos = await api.getMaterialPhotos(activeMaterialSlug);
+            if (Array.isArray(photos)) setMaterialPhotos(photos);
+            setPhotoCaption('');
+          }
+          setUploadingPhoto(false);
+          resolve();
+        };
+        reader.readAsDataURL(file);
+      };
+      input.click();
+    });
+  };
+
+  const deleteMaterialPhoto = async (id: number) => {
+    if (!confirm('Удалить фото?')) return;
+    await api.deleteMaterialPhoto(id);
+    setMaterialPhotos(materialPhotos.filter(p => p.id !== id));
+  };
+
   // --- Settings ---
   const saveSettingsHandler = async () => {
     setSavingSettings(true);
@@ -137,6 +191,7 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-stone-950 text-stone-100">
       <input ref={fileInputRef} type="file" accept="image/*" className="hidden" />
+      <input ref={materialFileRef} type="file" accept="image/*" className="hidden" />
 
       {/* Header */}
       <div className="bg-stone-900 border-b border-stone-700 px-6 py-4 flex items-center justify-between">
@@ -155,8 +210,8 @@ export default function Admin() {
       </div>
 
       {/* Tabs */}
-      <div className="bg-stone-900 border-b border-stone-700 px-6 flex gap-1">
-        {([['products', 'ShoppingBag', 'Товары'], ['blog', 'FileText', 'Блог'], ['settings', 'Settings', 'Настройки']] as const).map(([key, icon, label]) => (
+      <div className="bg-stone-900 border-b border-stone-700 px-6 flex gap-1 flex-wrap">
+        {([['products', 'ShoppingBag', 'Товары'], ['blog', 'FileText', 'Блог'], ['materials', 'Images', 'Галереи'], ['settings', 'Settings', 'Настройки']] as const).map(([key, icon, label]) => (
           <button
             key={key}
             onClick={() => setTab(key)}
@@ -294,6 +349,69 @@ export default function Admin() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* === MATERIALS === */}
+        {tab === 'materials' && (
+          <div>
+            <h2 className="text-xl font-bold mb-6">Галереи материалов</h2>
+
+            {/* Выбор материала */}
+            <div className="flex gap-2 mb-6 flex-wrap">
+              {MATERIAL_SLUGS.map(m => (
+                <button
+                  key={m.slug}
+                  onClick={() => setActiveMaterialSlug(m.slug)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeMaterialSlug === m.slug ? 'bg-amber-700 text-white' : 'bg-stone-800 text-stone-300 hover:bg-stone-700'}`}
+                >
+                  <span className="mr-1">{m.rune}</span> {m.name}
+                </button>
+              ))}
+            </div>
+
+            {/* Загрузка нового фото */}
+            <div className="bg-stone-800 border border-stone-700 rounded-xl p-5 mb-6">
+              <h3 className="font-semibold mb-3 text-sm text-stone-300">Добавить фото</h3>
+              <div className="flex gap-3 items-center">
+                <input
+                  className="input-field flex-1"
+                  placeholder="Подпись к фото (необязательно)"
+                  value={photoCaption}
+                  onChange={e => setPhotoCaption(e.target.value)}
+                />
+                <button
+                  onClick={uploadMaterialPhoto}
+                  disabled={uploadingPhoto}
+                  className="bg-amber-700 hover:bg-amber-600 disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 whitespace-nowrap"
+                >
+                  <Icon name="Upload" size={16} />
+                  {uploadingPhoto ? 'Загрузка...' : 'Загрузить фото'}
+                </button>
+              </div>
+            </div>
+
+            {/* Сетка фото */}
+            {materialPhotos.length === 0 ? (
+              <p className="text-stone-500 text-center py-12">Фото пока нет. Загрузите первое!</p>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                {materialPhotos.map(photo => (
+                  <div key={photo.id} className="relative group rounded-lg overflow-hidden bg-stone-800">
+                    <img src={photo.url} alt={photo.caption} className="w-full h-40 object-cover" />
+                    {photo.caption && (
+                      <p className="px-3 py-2 text-xs text-stone-300 truncate">{photo.caption}</p>
+                    )}
+                    <button
+                      onClick={() => deleteMaterialPhoto(photo.id)}
+                      className="absolute top-2 right-2 bg-red-900 hover:bg-red-700 text-white rounded-full w-7 h-7 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Icon name="X" size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
