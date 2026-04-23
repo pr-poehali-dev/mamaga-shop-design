@@ -93,7 +93,7 @@ export default function ContentSections({ scrollTo }: ContentSectionsProps) {
                 <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.8rem", fontWeight: 400, marginBottom: "12px" }}>{m.name}</h3>
                 <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.8rem", lineHeight: 1.8, color: "var(--cream-muted)" }}>{m.desc}</p>
                 <button className="mt-6 flex items-center gap-2 nav-link" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--gold)", background: "none", border: "none", cursor: "pointer" }}>
-                  Узнать больше <Icon name="ArrowRight" size={12} />
+                  <span style={{ fontFamily: "serif", fontSize: "1rem" }}>ᚱ</span> Узнать больше
                 </button>
               </div>
             ))}
@@ -176,8 +176,8 @@ export default function ContentSections({ scrollTo }: ContentSectionsProps) {
                       className="mt-5 flex items-center gap-2 nav-link"
                       style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--gold)", background: "none", border: "none", cursor: "pointer" }}
                     >
+                        <span style={{ fontFamily: "serif", fontSize: "1rem" }}>{isOpen ? "ᛉ" : "ᛟ"}</span>
                       {isOpen ? "Свернуть" : "Читать полностью"}
-                      <Icon name={isOpen ? "ChevronUp" : "ChevronDown"} size={12} />
                     </button>
                   </div>
                 </div>
@@ -208,7 +208,7 @@ export default function ContentSections({ scrollTo }: ContentSectionsProps) {
                   <h3 className="mt-2" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.4rem", fontWeight: 400 }}>{item.title}</h3>
                   <p className="mt-1" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.75rem", color: "var(--cream-muted)", lineHeight: 1.6 }}>{item.desc}</p>
                   <button className="mt-5 flex items-center gap-2 nav-link" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--gold)", background: "none", border: "none", cursor: "pointer" }}>
-                    Смотреть проект <Icon name="ArrowRight" size={12} />
+                    <span style={{ fontFamily: "serif", fontSize: "1rem" }}>ᚦ</span> Смотреть проект
                   </button>
                 </div>
               </div>
@@ -216,7 +216,9 @@ export default function ContentSections({ scrollTo }: ContentSectionsProps) {
           </div>
 
           <div className="text-center mt-12">
-            <button className="btn-outline-gold px-10 py-4 cursor-pointer" style={{ borderRadius: "2px" }}>Все проекты</button>
+            <button className="btn-outline-gold px-10 py-4 cursor-pointer flex items-center gap-3" style={{ borderRadius: "2px" }}>
+              <span style={{ fontFamily: "serif", fontSize: "1.1rem" }}>ᚷ</span> Все проекты
+            </button>
           </div>
         </div>
       </section>
@@ -249,7 +251,9 @@ export default function ContentSections({ scrollTo }: ContentSectionsProps) {
           <div className="mt-16 p-10 text-center" style={{ border: "1px solid rgba(201,168,76,0.2)", borderRadius: "2px", background: "rgba(201,168,76,0.03)" }}>
             <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "2rem", fontWeight: 300 }}>Готовы обсудить ваш проект?</h3>
             <p className="mt-4 mb-8" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.8rem", color: "var(--cream-muted)" }}>Расскажите нам о своей идее — мы предложим оптимальное решение и материалы</p>
-            <button className="btn-gold px-10 py-4 cursor-pointer" style={{ borderRadius: "2px" }} onClick={() => scrollTo("Контакты")}>Получить консультацию</button>
+            <button className="btn-gold px-10 py-4 cursor-pointer flex items-center gap-3" style={{ borderRadius: "2px" }} onClick={() => scrollTo("Контакты")}>
+              <span style={{ fontFamily: "serif", fontSize: "1.1rem" }}>ᚢ</span> Получить консультацию
+            </button>
           </div>
         </div>
       </section>
@@ -279,7 +283,7 @@ export default function ContentSections({ scrollTo }: ContentSectionsProps) {
                   <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.25rem", fontWeight: 400, lineHeight: 1.3, marginBottom: "10px" }}>{post.title}</h3>
                   <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.75rem", lineHeight: 1.8, color: "var(--cream-muted)" }}>{post.excerpt}</p>
                   <button className="mt-6 flex items-center gap-2 blog-read-more transition-colors duration-300" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--cream-muted)", background: "none", border: "none", cursor: "pointer" }}>
-                    Читать далее <Icon name="ArrowRight" size={11} />
+                    <span style={{ fontFamily: "serif", fontSize: "1rem" }}>ᚾ</span> Читать далее
                   </button>
                 </div>
               </div>

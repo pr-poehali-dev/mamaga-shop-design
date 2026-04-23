@@ -28,7 +28,8 @@ export default function Navbar({ activeSection, mobileMenuOpen, setMobileMenuOpe
           ))}
         </div>
 
-        <button className="hidden lg:flex btn-gold px-5 py-2.5 text-xs tracking-widest cursor-pointer" style={{ borderRadius: "2px" }}>
+        <button className="hidden lg:flex btn-gold px-5 py-2.5 text-xs tracking-widest cursor-pointer items-center gap-2" style={{ borderRadius: "2px" }}>
+          <span style={{ fontFamily: "serif", fontSize: "1rem" }}>ᚢ</span>
           Заказать консультацию
         </button>
 

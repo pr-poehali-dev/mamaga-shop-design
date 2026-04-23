@@ -111,7 +111,9 @@ export default function CatalogSection({ materialFilter, setMaterialFilter, styl
                   <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.4rem", color: "var(--gold)", fontWeight: 300 }}>
                     {p.price.toLocaleString("ru-RU")} ₽
                   </p>
-                  <button className="btn-outline-gold px-4 py-2 cursor-pointer" style={{ borderRadius: "2px", fontSize: "0.6rem" }}>Подробнее</button>
+                  <button className="btn-outline-gold px-4 py-2 cursor-pointer flex items-center gap-2" style={{ borderRadius: "2px", fontSize: "0.6rem" }}>
+                    <span style={{ fontFamily: "serif", fontSize: "0.9rem" }}>ᛏ</span> Подробнее
+                  </button>
                 </div>
               </div>
             </div>

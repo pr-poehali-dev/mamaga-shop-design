@@ -137,10 +137,12 @@ export default function HeroSection({ scrollTo }: HeroSectionProps) {
             <span style={{ fontStyle: "normal", fontSize: "0.85rem", letterSpacing: "0.05em" }}>Мы слышим. Мы чтим. Мы создаём.</span>
           </p>
           <div className="flex flex-wrap gap-4 mt-10 animate-fade-in-up delay-400" style={{ opacity: 0, animationFillMode: "forwards" }}>
-            <button className="btn-gold px-8 py-4 cursor-pointer" style={{ borderRadius: "2px" }} onClick={() => scrollTo("Каталог")}>
+            <button className="btn-gold px-8 py-4 cursor-pointer flex items-center gap-3" style={{ borderRadius: "2px" }} onClick={() => scrollTo("Каталог")}>
+              <span style={{ fontFamily: "serif", fontSize: "1.1rem", letterSpacing: "0.05em" }}>ᚠ</span>
               Смотреть каталог
             </button>
-            <button className="btn-outline-gold px-8 py-4 cursor-pointer" style={{ borderRadius: "2px" }} onClick={() => scrollTo("Портфолио")}>
+            <button className="btn-outline-gold px-8 py-4 cursor-pointer flex items-center gap-3" style={{ borderRadius: "2px" }} onClick={() => scrollTo("Портфолио")}>
+              <span style={{ fontFamily: "serif", fontSize: "1.1rem", letterSpacing: "0.05em" }}>ᚹ</span>
               Наши работы
             </button>
           </div>

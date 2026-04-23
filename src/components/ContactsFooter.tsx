@@ -55,7 +55,9 @@ export default function ContactsFooter() {
                 <div className="p-8 text-center" style={{ border: "1px solid rgba(201,168,76,0.3)", borderRadius: "2px", background: "rgba(201,168,76,0.05)" }}>
                   <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.6rem", color: "var(--gold)", marginBottom: "8px" }}>Заявка отправлена</p>
                   <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.75rem", color: "var(--cream-muted)" }}>Мы свяжемся с вами в ближайшее время</p>
-                  <button onClick={() => setStatus("idle")} className="mt-6 btn-outline-gold px-6 py-2 cursor-pointer" style={{ borderRadius: "2px", fontSize: "0.7rem" }}>Отправить ещё</button>
+                  <button onClick={() => setStatus("idle")} className="mt-6 btn-outline-gold px-6 py-2 cursor-pointer flex items-center gap-2" style={{ borderRadius: "2px", fontSize: "0.7rem" }}>
+                    <span style={{ fontFamily: "serif", fontSize: "1rem" }}>ᚨ</span> Отправить ещё
+                  </button>
                 </div>
               ) : (
                 <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
@@ -66,7 +68,8 @@ export default function ContactsFooter() {
                   {status === "error" && (
                     <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.75rem", color: "#e57373" }}>Ошибка отправки. Попробуйте ещё раз.</p>
                   )}
-                  <button type="submit" disabled={status === "loading"} className="btn-gold py-4 cursor-pointer" style={{ borderRadius: "2px", opacity: status === "loading" ? 0.7 : 1 }}>
+                  <button type="submit" disabled={status === "loading"} className="btn-gold py-4 cursor-pointer flex items-center justify-center gap-3" style={{ borderRadius: "2px", opacity: status === "loading" ? 0.7 : 1 }}>
+                    <span style={{ fontFamily: "serif", fontSize: "1.1rem" }}>{status === "loading" ? "ᛜ" : "ᛊ"}</span>
                     {status === "loading" ? "Отправляем..." : "Отправить заявку"}
                   </button>
                 </form>
