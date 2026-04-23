@@ -11,8 +11,6 @@ export default function Index() {
   const [materialFilter, setMaterialFilter] = useState("Все материалы");
   const [styleFilter, setStyleFilter] = useState("Все стили");
   const [priceFilter, setPriceFilter] = useState<number | null>(null);
-  const [openMyth, setOpenMyth] = useState<number | null>(null);
-
   const scrollTo = (section: string) => {
     setActiveSection(section);
     setMobileMenuOpen(false);
@@ -38,8 +36,8 @@ export default function Index() {
         setPriceFilter={setPriceFilter}
       />
       <ContentSections
-        openMyth={openMyth}
-        setOpenMyth={setOpenMyth}
+        openMyth={null}
+        setOpenMyth={() => {}}
         scrollTo={scrollTo}
       />
       <ContactsFooter />

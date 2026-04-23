@@ -11,10 +11,34 @@ const MATERIALS = [
 ];
 
 const MYTHS = [
-  { q: "Натуральные материалы — это всегда дорого", a: "Долгосрочная инвестиция: изделие из массива дуба служит 50+ лет без ремонта. Итоговая стоимость владения ниже, чем у дешёвых аналогов." },
-  { q: "Дерево боится влаги и рассыхается", a: "При профессиональной обработке маслами и воском дерево надёжно защищено. Мы применяем немецкие покрытия Osmo с гарантией 10 лет." },
-  { q: "Камень слишком тяжёлый для мебели", a: "Современные технологии позволяют делать слэбы толщиной 20–30 мм без потери прочности. Наши столешницы не требуют усиленных оснований." },
-  { q: "Металл ржавеет и пачкает ткань", a: "Все изделия проходят обработку антикоррозийными составами и покрываются воском или лаком. Острые кромки снимаются вручную." },
+  {
+    material: "Дерево",
+    title: "Дерево Игдрасиль",
+    icon: "🌳",
+    img: WOOD_IMAGE,
+    story: "В начале времён великий ясень Игдрасиль пронзил своими корнями все девять миров. Боги собирались у его ствола, чтобы вершить судьбы. Говорят, мастер, который прикасается к живому дереву с уважением, слышит его память — годовые кольца хранят каждую бурю, каждое лето, каждый рассвет за сотни лет. Изделие из массива — это не просто стол. Это часть того самого древа.",
+  },
+  {
+    material: "Камень",
+    title: "Камень из сердца горы",
+    icon: "🪨",
+    img: MARBLE_IMAGE,
+    story: "Прометей, прикованный к скале, тысячелетиями чувствовал её тепло. Камень помнит всё: давление земных недр, огонь вулканов, холод ледников. Когда мрамор выходит на свет впервые, его прожилки — это карта путешествия длиной в миллион лет. Мы лишь помогаем камню рассказать свою историю.",
+  },
+  {
+    material: "Металл",
+    title: "Меч в камне",
+    icon: "⚔️",
+    img: HERO_IMAGE,
+    story: "Экскалибур не был выкован — он был явлен. Металл, прошедший через огонь и волю мастера, обретает душу. Гефест, бог-кузнец, ковал не просто оружие — он вкладывал в каждый удар молота намерение, силу и судьбу. Латунь, сталь, бронза в наших руках проходят тот же путь: от руды к произведению, достойному легенды.",
+  },
+  {
+    material: "Дерево + Камень",
+    title: "Данко и его сердце",
+    icon: "🔥",
+    img: WOOD_IMAGE,
+    story: "Данко вырвал из груди своё пылающее сердце, чтобы осветить путь людям сквозь тёмный лес. Так и природа отдаёт своё лучшее — вековой орех, каррарский мрамор, карпатский дуб. Мы принимаем этот дар с благодарностью и превращаем его в предмет, который будет согревать твой дом спустя поколения.",
+  },
 ];
 
 const PORTFOLIO_ITEMS = [
@@ -42,7 +66,7 @@ interface ContentSectionsProps {
   scrollTo: (section: string) => void;
 }
 
-export default function ContentSections({ openMyth, setOpenMyth, scrollTo }: ContentSectionsProps) {
+export default function ContentSections({ scrollTo }: ContentSectionsProps) {
   return (
     <>
       {/* О МАТЕРИАЛАХ */}
@@ -96,34 +120,35 @@ export default function ContentSections({ openMyth, setOpenMyth, scrollTo }: Con
 
       {/* МИФЫ */}
       <section id="Мифы" className="py-24" style={{ background: "var(--dark-2)" }}>
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col items-center mb-16">
-            <p className="section-label mb-4">Развенчиваем заблуждения</p>
+            <p className="section-label mb-4">Легенды материалов</p>
             <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 300, textAlign: "center" }}>
-              Мифы о натуральных<br />материалах
+              Мифы
             </h2>
             <div className="gold-line mt-5" />
           </div>
 
-          <div className="flex flex-col gap-0">
+          <div className="grid lg:grid-cols-2 gap-8">
             {MYTHS.map((myth, i) => (
-              <div key={i} className="myth-item">
-                <button className="w-full flex items-center justify-between py-7 text-left group" onClick={() => setOpenMyth(openMyth === i ? null : i)} style={{ background: "none", border: "none", cursor: "pointer" }}>
-                  <div className="flex items-start gap-4">
-                    <span style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.1rem", color: "var(--gold)", minWidth: "28px" }}>
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.3rem", fontWeight: 400, lineHeight: 1.3, color: openMyth === i ? "var(--gold)" : "var(--cream)" }}>
-                      {myth.q}
-                    </h3>
+              <div key={i} className="group relative overflow-hidden" style={{ border: "1px solid rgba(201,168,76,0.15)", borderRadius: "2px", background: "var(--dark-3)", transition: "border-color 0.4s ease" }}
+                onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.4)")}
+                onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.15)")}>
+                <div className="h-48 overflow-hidden relative">
+                  <img src={myth.img} alt={myth.title} className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" />
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(13,11,8,0.2) 0%, rgba(13,11,8,0.85) 100%)" }} />
+                  <div className="absolute bottom-0 left-0 p-6 flex items-end gap-4">
+                    <span className="text-3xl">{myth.icon}</span>
+                    <div>
+                      <span style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.55rem", letterSpacing: "0.25em", color: "var(--gold)", textTransform: "uppercase" }}>{myth.material}</span>
+                      <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.5rem", fontWeight: 400, color: "var(--cream)", lineHeight: 1.1 }}>{myth.title}</h3>
+                    </div>
                   </div>
-                  <Icon name={openMyth === i ? "Minus" : "Plus"} size={16} style={{ color: "var(--gold)", flexShrink: 0, marginLeft: "16px" }} />
-                </button>
-                {openMyth === i && (
-                  <div className="pb-7 pl-10">
-                    <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.82rem", lineHeight: 1.9, color: "var(--cream-muted)" }}>{myth.a}</p>
-                  </div>
-                )}
+                </div>
+                <div className="p-7">
+                  <div className="gold-line mb-5" />
+                  <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1rem", lineHeight: 1.9, color: "var(--cream-muted)", fontStyle: "italic" }}>{myth.story}</p>
+                </div>
               </div>
             ))}
           </div>
