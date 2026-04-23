@@ -89,7 +89,7 @@ export default function ContentSections({ scrollTo }: ContentSectionsProps) {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {MATERIALS.map((m, i) => (
               <div key={i} className="group p-8 relative" style={{ border: "1px solid rgba(201,168,76,0.15)", borderRadius: "2px", background: "rgba(201,168,76,0.02)", transition: "all 0.4s ease" }}
                 onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.5)")}
