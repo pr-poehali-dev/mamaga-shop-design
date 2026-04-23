@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 
 const HERO_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/e93c2ccd-1cf6-4059-82f1-e74aab891821.jpg";
@@ -6,10 +7,10 @@ const WOOD_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174
 const MARBLE_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/d50a62b6-2324-4f9c-b1c6-4861301cdfe6.jpg";
 
 const MATERIALS = [
-  { name: "Дерево", desc: "Корень, сук, наплыв — не изъян, а голос дерева. Мы слышим, чем хочет стать каждая ветвь. Дуб, орех, карагач: каждое изделие — это судьба, прожитая деревом.", icon: "🌳" },
-  { name: "Железо", desc: "Металл не терпит слабых рук. Но тому, кто умеет держать огонь — он подчиняется как вода. Латунь, сталь, бронза: жёсткость снаружи, душа внутри.", icon: "⚙️" },
-  { name: "Камень", desc: "Камень молчит тысячелетиями. Но однажды — раскалывается, и внутри оказывается то, чего не видел ни один глаз. Мрамор, оникс, гранит: красота, которую нельзя придумать.", icon: "🪨" },
-  { name: "Корнепластика", desc: "Корнепластика — это не стиль. Это философия: дерево, железо и камень не соединяются — они срастаются, как срастаются корни разных деревьев под землёй. Каждое изделие — живой организм из трёх стихий.", icon: "🌿" },
+  { name: "Дерево", slug: "derevo", desc: "Корень, сук, наплыв — не изъян, а голос дерева. Мы слышим, чем хочет стать каждая ветвь. Дуб, орех, карагач: каждое изделие — это судьба, прожитая деревом.", icon: "🌳" },
+  { name: "Железо", slug: "zhelezo", desc: "Металл не терпит слабых рук. Но тому, кто умеет держать огонь — он подчиняется как вода. Латунь, сталь, бронза: жёсткость снаружи, душа внутри.", icon: "⚙️" },
+  { name: "Камень", slug: "kamen", desc: "Камень молчит тысячелетиями. Но однажды — раскалывается, и внутри оказывается то, чего не видел ни один глаз. Мрамор, оникс, гранит: красота, которую нельзя придумать.", icon: "🪨" },
+  { name: "Корнепластика", slug: "korneplastika", desc: "Корнепластика — это не стиль. Это философия: дерево, железо и камень не соединяются — они срастаются, как срастаются корни разных деревьев под землёй. Каждое изделие — живой организм из трёх стихий.", icon: "🌿" },
 ];
 
 const MYTHS = [
@@ -70,6 +71,7 @@ interface ContentSectionsProps {
 
 export default function ContentSections({ scrollTo }: ContentSectionsProps) {
   const [openMyth, setOpenMyth] = useState<number | null>(null);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -96,7 +98,7 @@ export default function ContentSections({ scrollTo }: ContentSectionsProps) {
                 <div className="gold-line mb-6" />
                 <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.8rem", fontWeight: 400, marginBottom: "12px" }}>{m.name}</h3>
                 <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.8rem", lineHeight: 1.8, color: "var(--cream-muted)" }}>{m.desc}</p>
-                <button className="mt-6 flex items-center gap-2 nav-link" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--gold)", background: "none", border: "none", cursor: "pointer" }}>
+                <button onClick={() => navigate(`/material/${m.slug}`)} className="mt-6 flex items-center gap-2 nav-link" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--gold)", background: "none", border: "none", cursor: "pointer" }}>
                   <span style={{ fontFamily: "serif", fontSize: "1rem" }}>ᚱ</span> Узнать больше
                 </button>
               </div>
