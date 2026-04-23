@@ -301,6 +301,7 @@ export default function Admin() {
                       {!p.is_visible && <span className="text-xs bg-stone-700 text-stone-400 px-2 py-0.5 rounded">скрыт</span>}
                     </div>
                     <div className="text-stone-400 text-sm mt-1">{p.material} · {p.style} · {p.price ? `${p.price.toLocaleString()} ₽` : 'цена не указана'}</div>
+                    {p.description && <div className="text-stone-500 text-xs mt-1 truncate max-w-md">{p.description}</div>}
                   </div>
                   <div className="flex gap-2">
                     <button onClick={() => setEditProduct(p)} className="text-stone-400 hover:text-amber-400 p-2"><Icon name="Pencil" size={16} /></button>
