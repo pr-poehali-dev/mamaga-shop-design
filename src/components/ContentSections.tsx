@@ -108,7 +108,6 @@ export default function ContentSections({ scrollTo }: ContentSectionsProps) {
               <div className="absolute inset-0" style={{ background: "rgba(13,11,8,0.4)" }} />
             </div>
             <div className="p-12 flex flex-col justify-center" style={{ background: "var(--dark-3)" }}>
-              <p className="section-label mb-6">Корнепластика</p>
               <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "2rem", fontWeight: 300, lineHeight: 1.2 }}>
                 Там, где дерево встречает камень — рождается третье
               </h3>
