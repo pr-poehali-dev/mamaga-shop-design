@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Icon from "@/components/ui/icon";
 
 const HERO_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/a5fd1402-d2f7-4bf5-ab13-8c879035c0cd.jpg";
@@ -67,6 +68,8 @@ interface ContentSectionsProps {
 }
 
 export default function ContentSections({ scrollTo }: ContentSectionsProps) {
+  const [openMyth, setOpenMyth] = useState<number | null>(null);
+
   return (
     <>
       {/* О МАТЕРИАЛАХ */}
@@ -130,27 +133,56 @@ export default function ContentSections({ scrollTo }: ContentSectionsProps) {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
-            {MYTHS.map((myth, i) => (
-              <div key={i} className="group relative overflow-hidden" style={{ border: "1px solid rgba(201,168,76,0.15)", borderRadius: "2px", background: "var(--dark-3)", transition: "border-color 0.4s ease" }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.4)")}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.15)")}>
-                <div className="h-48 overflow-hidden relative">
-                  <img src={myth.img} alt={myth.title} className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" />
-                  <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(13,11,8,0.2) 0%, rgba(13,11,8,0.85) 100%)" }} />
-                  <div className="absolute bottom-0 left-0 p-6 flex items-end gap-4">
-                    <span className="text-3xl">{myth.icon}</span>
-                    <div>
-                      <span style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.55rem", letterSpacing: "0.25em", color: "var(--gold)", textTransform: "uppercase" }}>{myth.material}</span>
-                      <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.5rem", fontWeight: 400, color: "var(--cream)", lineHeight: 1.1 }}>{myth.title}</h3>
+            {MYTHS.map((myth, i) => {
+              const isOpen = openMyth === i;
+              const preview = myth.story.slice(0, 120) + "...";
+              return (
+                <div key={i} className="group relative overflow-hidden" style={{ border: `1px solid ${isOpen ? "rgba(201,168,76,0.45)" : "rgba(201,168,76,0.15)"}`, borderRadius: "2px", background: "var(--dark-3)", transition: "border-color 0.4s ease" }}
+                  onMouseEnter={e => { if (!isOpen) e.currentTarget.style.borderColor = "rgba(201,168,76,0.35)"; }}
+                  onMouseLeave={e => { if (!isOpen) e.currentTarget.style.borderColor = "rgba(201,168,76,0.15)"; }}>
+
+                  {/* Картинка */}
+                  <div className="h-52 overflow-hidden relative">
+                    <img src={myth.img} alt={myth.title} className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" />
+                    <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(13,11,8,0.1) 0%, rgba(13,11,8,0.88) 100%)" }} />
+                    <div className="absolute bottom-0 left-0 p-6 flex items-end gap-4">
+                      <span className="text-3xl">{myth.icon}</span>
+                      <div>
+                        <span style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.55rem", letterSpacing: "0.25em", color: "var(--gold)", textTransform: "uppercase" }}>{myth.material}</span>
+                        <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.5rem", fontWeight: 400, color: "var(--cream)", lineHeight: 1.1 }}>{myth.title}</h3>
+                      </div>
+                    </div>
+                    {/* Номер */}
+                    <div className="absolute top-4 right-4" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "2.5rem", fontWeight: 300, color: "rgba(201,168,76,0.2)", lineHeight: 1 }}>
+                      {String(i + 1).padStart(2, "0")}
                     </div>
                   </div>
+
+                  {/* Текст */}
+                  <div className="p-7">
+                    <div className="gold-line mb-5" />
+
+                    {/* Превью — всегда виден */}
+                    <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1rem", lineHeight: 1.9, color: "var(--cream-muted)", fontStyle: "italic" }}>
+                      {isOpen ? myth.story : preview}
+                    </p>
+
+                    {/* Раскрытая часть */}
+                    <div style={{ overflow: "hidden", maxHeight: isOpen ? "0px" : "0px", transition: "max-height 0.5s ease" }} />
+
+                    {/* Кнопка */}
+                    <button
+                      onClick={() => setOpenMyth(isOpen ? null : i)}
+                      className="mt-5 flex items-center gap-2 nav-link"
+                      style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--gold)", background: "none", border: "none", cursor: "pointer" }}
+                    >
+                      {isOpen ? "Свернуть" : "Читать полностью"}
+                      <Icon name={isOpen ? "ChevronUp" : "ChevronDown"} size={12} />
+                    </button>
+                  </div>
                 </div>
-                <div className="p-7">
-                  <div className="gold-line mb-5" />
-                  <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1rem", lineHeight: 1.9, color: "var(--cream-muted)", fontStyle: "italic" }}>{myth.story}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
