@@ -90,7 +90,7 @@ export default function Index() {
             <div className="w-7 h-7 flex items-center justify-center" style={{ border: "1px solid var(--gold)" }}>
               <span style={{ color: "var(--gold)", fontSize: "10px", letterSpacing: "0.05em", fontFamily: "Cormorant Garamond, serif", fontWeight: 600 }}>A</span>
             </div>
-            <span style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.1rem", letterSpacing: "0.2em", color: "var(--cream)" }}>ARTISANO</span>
+            <span style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.1rem", letterSpacing: "0.2em", color: "var(--cream)" }}>VKORNE</span>
           </div>
 
           <div className="hidden lg:flex items-center gap-7">
@@ -510,10 +510,10 @@ export default function Index() {
             <div className="w-6 h-6 flex items-center justify-center" style={{ border: "1px solid rgba(201,168,76,0.4)" }}>
               <span style={{ color: "var(--gold)", fontSize: "9px", fontFamily: "Cormorant Garamond, serif", fontWeight: 600 }}>A</span>
             </div>
-            <span style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1rem", letterSpacing: "0.2em", color: "var(--cream-muted)" }}>ARTISANO</span>
+            <span style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1rem", letterSpacing: "0.2em", color: "var(--cream-muted)" }}>VKORNE</span>
           </div>
           <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", letterSpacing: "0.1em", color: "var(--cream-muted)", opacity: 0.5 }}>
-            © 2026 ARTISANO. Все права защищены.
+            © 2026 VKORNE. Все права защищены.
           </p>
           <div className="flex gap-6">
             {["ВКонтакте", "Telegram", "Дзен"].map((s) => (
