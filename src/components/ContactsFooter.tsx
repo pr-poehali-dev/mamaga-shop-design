@@ -80,8 +80,8 @@ export default function ContactsFooter() {
               <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.6rem", fontWeight: 300 }}>Реквизиты</h3>
               {[
                 { icon: "MapPin", label: "Адрес", value: "Москва, ул. Мастеровая, 14, стр. 2" },
-                { icon: "Phone", label: "Телефон", value: "+7 (495) 123-45-67" },
-                { icon: "Mail", label: "E-mail", value: "hello@artisano.ru" },
+                { icon: "Phone", label: "Телефон", value: "+7 (921) 235-49-67" },
+                { icon: "Mail", label: "E-mail", value: "anisim4ik-10@yandex.ru" },
                 { icon: "Clock", label: "Режим работы", value: "Пн–Пт 9:00–19:00, Сб 10:00–16:00" },
               ].map((c) => (
                 <div key={c.label} className="flex items-start gap-5">
