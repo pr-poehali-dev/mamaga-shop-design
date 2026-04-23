@@ -1,14 +1,16 @@
+import { useState, useEffect } from 'react';
+
 const WOOD_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/0b859a9e-8cca-4712-9284-c6b9628bb842.jpg";
 const MARBLE_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/d50a62b6-2324-4f9c-b1c6-4861301cdfe6.jpg";
 const HERO_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/e93c2ccd-1cf6-4059-82f1-e74aab891821.jpg";
 
-const PRODUCTS = [
-  { id: 1, name: "Столешница из слэба ореха", material: "дерево", style: "лофт", price: 85000, tag: "Популярное", img: WOOD_IMAGE },
-  { id: 2, name: "Столешница из мрамора Calacatta", material: "камень", style: "классика", price: 140000, tag: "Новинка", img: MARBLE_IMAGE },
-  { id: 3, name: "Подстолье из кованого металла", material: "металл", style: "лофт", price: 45000, tag: null, img: HERO_IMAGE },
-  { id: 4, name: "Полка из массива дуба", material: "дерево", style: "минимализм", price: 28000, tag: null, img: WOOD_IMAGE },
-  { id: 5, name: "Столешница из гранита", material: "камень", style: "классика", price: 95000, tag: "Хит", img: MARBLE_IMAGE },
-  { id: 6, name: "Экран из латуни и стали", material: "металл", style: "арт-деко", price: 62000, tag: null, img: HERO_IMAGE },
+const FALLBACK_PRODUCTS = [
+  { id: 1, title: "Столешница из слэба ореха", material: "дерево", style: "лофт", price: 85000, image_url: WOOD_IMAGE },
+  { id: 2, title: "Столешница из мрамора Calacatta", material: "камень", style: "классика", price: 140000, image_url: MARBLE_IMAGE },
+  { id: 3, title: "Подстолье из кованого металла", material: "металл", style: "лофт", price: 45000, image_url: HERO_IMAGE },
+  { id: 4, title: "Полка из массива дуба", material: "дерево", style: "минимализм", price: 28000, image_url: WOOD_IMAGE },
+  { id: 5, title: "Столешница из гранита", material: "камень", style: "классика", price: 95000, image_url: MARBLE_IMAGE },
+  { id: 6, title: "Экран из латуни и стали", material: "металл", style: "арт-деко", price: 62000, image_url: HERO_IMAGE },
 ];
 
 const PRICE_RANGES = [
@@ -17,9 +19,6 @@ const PRICE_RANGES = [
   { label: "80 000 — 150 000 ₽", min: 80000, max: 150000 },
   { label: "Свыше 150 000 ₽", min: 150000, max: Infinity },
 ];
-
-const STYLES = ["Все стили", "лофт", "классика", "минимализм", "арт-деко"];
-const MATERIAL_FILTERS = ["Все материалы", "дерево", "металл", "камень"];
 
 interface CatalogSectionProps {
   materialFilter: string;
@@ -30,8 +29,29 @@ interface CatalogSectionProps {
   setPriceFilter: (v: number | null) => void;
 }
 
+interface Product {
+  id: number;
+  title: string;
+  material: string;
+  style: string;
+  price: number;
+  image_url: string;
+}
+
 export default function CatalogSection({ materialFilter, setMaterialFilter, styleFilter, setStyleFilter, priceFilter, setPriceFilter }: CatalogSectionProps) {
-  const filteredProducts = PRODUCTS.filter((p) => {
+  const [products, setProducts] = useState<Product[]>(FALLBACK_PRODUCTS);
+
+  useEffect(() => {
+    fetch('https://functions.poehali.dev/dbf58220-06f5-4ed4-a81f-28376a0939fe')
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data) && data.length > 0) setProducts(data); })
+      .catch(() => {});
+  }, []);
+
+  const materials = ["Все материалы", ...Array.from(new Set(products.map(p => p.material).filter(Boolean)))];
+  const styles = ["Все стили", ...Array.from(new Set(products.map(p => p.style).filter(Boolean)))];
+
+  const filteredProducts = products.filter((p) => {
     const matOk = materialFilter === "Все материалы" || p.material === materialFilter;
     const styleOk = styleFilter === "Все стили" || p.style === styleFilter;
     const range = priceFilter !== null ? PRICE_RANGES[priceFilter] : null;
@@ -54,7 +74,7 @@ export default function CatalogSection({ materialFilter, setMaterialFilter, styl
           <div>
             <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.6rem", letterSpacing: "0.25em", color: "var(--gold)", textTransform: "uppercase", marginBottom: "10px" }}>Материал</p>
             <div className="flex flex-wrap gap-2">
-              {MATERIAL_FILTERS.map((m) => (
+              {materials.map((m) => (
                 <button key={m} onClick={() => setMaterialFilter(m)} className={`filter-tab px-4 py-2 ${materialFilter === m ? "active" : ""}`} style={{ borderRadius: "2px", cursor: "pointer" }}>
                   {m}
                 </button>
@@ -64,7 +84,7 @@ export default function CatalogSection({ materialFilter, setMaterialFilter, styl
           <div>
             <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.6rem", letterSpacing: "0.25em", color: "var(--gold)", textTransform: "uppercase", marginBottom: "10px" }}>Стиль</p>
             <div className="flex flex-wrap gap-2">
-              {STYLES.map((s) => (
+              {styles.map((s) => (
                 <button key={s} onClick={() => setStyleFilter(s)} className={`filter-tab px-4 py-2 ${styleFilter === s ? "active" : ""}`} style={{ borderRadius: "2px", cursor: "pointer" }}>
                   {s}
                 </button>
@@ -92,13 +112,8 @@ export default function CatalogSection({ materialFilter, setMaterialFilter, styl
             </div>
           ) : filteredProducts.map((p) => (
             <div key={p.id} className="product-card group relative" style={{ background: "var(--dark-3)", borderRadius: "2px", overflow: "hidden", border: "1px solid rgba(201,168,76,0.08)" }}>
-              {p.tag && (
-                <div className="absolute top-4 left-4 z-10 px-3 py-1" style={{ background: "var(--gold)", borderRadius: "1px" }}>
-                  <span style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.6rem", letterSpacing: "0.15em", color: "var(--dark)", textTransform: "uppercase" }}>{p.tag}</span>
-                </div>
-              )}
               <div className="h-56 overflow-hidden">
-                <img src={p.img} alt={p.name} className="w-full h-full object-cover" />
+                <img src={p.image_url} alt={p.title} className="w-full h-full object-cover" />
               </div>
               <div className="p-6">
                 <div className="flex items-center gap-2 mb-2">
@@ -106,10 +121,10 @@ export default function CatalogSection({ materialFilter, setMaterialFilter, styl
                   <span style={{ color: "rgba(201,168,76,0.3)" }}>·</span>
                   <span style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", color: "var(--cream-muted)", textTransform: "uppercase" }}>{p.style}</span>
                 </div>
-                <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.25rem", fontWeight: 400, lineHeight: 1.2 }}>{p.name}</h3>
+                <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.25rem", fontWeight: 400, lineHeight: 1.2 }}>{p.title}</h3>
                 <div className="flex items-center justify-between mt-4">
                   <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.4rem", color: "var(--gold)", fontWeight: 300 }}>
-                    {p.price.toLocaleString("ru-RU")} ₽
+                    {p.price ? `${p.price.toLocaleString("ru-RU")} ₽` : 'по запросу'}
                   </p>
                   <button className="btn-outline-gold px-4 py-2 cursor-pointer flex items-center gap-2" style={{ borderRadius: "2px", fontSize: "0.6rem" }}>
                     <span style={{ fontFamily: "serif", fontSize: "0.9rem" }}>ᛏ</span> Подробнее

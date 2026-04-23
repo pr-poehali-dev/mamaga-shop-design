@@ -1,0 +1,17 @@
+{
+  "tests": [
+    {
+      "name": "Get products list",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Unauthorized create",
+      "method": "POST",
+      "path": "/",
+      "body": {"title": "Test"},
+      "expectedStatus": 401
+    }
+  ]
+}

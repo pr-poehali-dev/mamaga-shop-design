@@ -1,3 +1,7 @@
 {
+  "admin-misc": "https://functions.poehali.dev/786ad7de-c595-4b8d-ae5e-e29a38d66bd8",
+  "admin-blog": "https://functions.poehali.dev/86f8d4bd-d084-4873-a0bf-84bfef047aa6",
+  "admin-products": "https://functions.poehali.dev/dbf58220-06f5-4ed4-a81f-28376a0939fe",
+  "admin-auth": "https://functions.poehali.dev/c3580888-e8a2-479c-91fa-adaca4b43d67",
   "send-contact": "https://functions.poehali.dev/f06415d5-74ec-4511-bfc5-a38fd0ed38ce"
 }
