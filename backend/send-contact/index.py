@@ -6,7 +6,7 @@ from email.mime.multipart import MIMEMultipart
 
 
 def handler(event: dict, context) -> dict:
-    """Отправка заявки с сайта VKORNE на почту владельца"""
+    """Отправка заявки с сайта VKORNE на почту владельца. v2"""
     headers = {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "POST, OPTIONS",
