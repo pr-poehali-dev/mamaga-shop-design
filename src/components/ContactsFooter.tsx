@@ -1,6 +1,39 @@
+import { useState } from "react";
 import Icon from "@/components/ui/icon";
 
+const SEND_CONTACT_URL = "https://functions.poehali.dev/f06415d5-74ec-4511-bfc5-a38fd0ed38ce";
+
 export default function ContactsFooter() {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("loading");
+    try {
+      const res = await fetch(SEND_CONTACT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, phone, email, message }),
+      });
+      if (res.ok) {
+        setStatus("success");
+        setName(""); setPhone(""); setEmail(""); setMessage("");
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  const inputStyle = { background: "rgba(255,255,255,0.03)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: "2px", padding: "14px 18px", fontFamily: "Montserrat, sans-serif", fontSize: "0.8rem", color: "var(--cream)", outline: "none", transition: "border-color 0.3s", width: "100%" };
+  const onFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => (e.target.style.borderColor = "rgba(201,168,76,0.6)");
+  const onBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => (e.target.style.borderColor = "rgba(201,168,76,0.2)");
+
   return (
     <>
       {/* КОНТАКТЫ */}
@@ -17,17 +50,27 @@ export default function ContactsFooter() {
           <div className="grid lg:grid-cols-2 gap-16">
             <div>
               <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.6rem", fontWeight: 300, marginBottom: "24px" }}>Напишите нам</h3>
-              <form className="flex flex-col gap-5">
-                {["Ваше имя", "Номер телефона", "E-mail"].map((placeholder) => (
-                  <input key={placeholder} type="text" placeholder={placeholder} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: "2px", padding: "14px 18px", fontFamily: "Montserrat, sans-serif", fontSize: "0.8rem", color: "var(--cream)", outline: "none", transition: "border-color 0.3s", width: "100%" }}
-                    onFocus={e => (e.target.style.borderColor = "rgba(201,168,76,0.6)")}
-                    onBlur={e => (e.target.style.borderColor = "rgba(201,168,76,0.2)")} />
-                ))}
-                <textarea placeholder="Расскажите о вашем проекте..." rows={4} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: "2px", padding: "14px 18px", fontFamily: "Montserrat, sans-serif", fontSize: "0.8rem", color: "var(--cream)", outline: "none", resize: "none", transition: "border-color 0.3s", width: "100%" }}
-                  onFocus={e => (e.target.style.borderColor = "rgba(201,168,76,0.6)")}
-                  onBlur={e => (e.target.style.borderColor = "rgba(201,168,76,0.2)")} />
-                <button type="submit" className="btn-gold py-4 cursor-pointer" style={{ borderRadius: "2px" }}>Отправить заявку</button>
-              </form>
+
+              {status === "success" ? (
+                <div className="p-8 text-center" style={{ border: "1px solid rgba(201,168,76,0.3)", borderRadius: "2px", background: "rgba(201,168,76,0.05)" }}>
+                  <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.6rem", color: "var(--gold)", marginBottom: "8px" }}>Заявка отправлена</p>
+                  <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.75rem", color: "var(--cream-muted)" }}>Мы свяжемся с вами в ближайшее время</p>
+                  <button onClick={() => setStatus("idle")} className="mt-6 btn-outline-gold px-6 py-2 cursor-pointer" style={{ borderRadius: "2px", fontSize: "0.7rem" }}>Отправить ещё</button>
+                </div>
+              ) : (
+                <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+                  <input type="text" placeholder="Ваше имя" value={name} onChange={e => setName(e.target.value)} style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
+                  <input type="text" placeholder="Номер телефона" value={phone} onChange={e => setPhone(e.target.value)} style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
+                  <input type="text" placeholder="E-mail" value={email} onChange={e => setEmail(e.target.value)} style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
+                  <textarea placeholder="Расскажите о вашем проекте..." rows={4} value={message} onChange={e => setMessage(e.target.value)} style={{ ...inputStyle, resize: "none" }} onFocus={onFocus} onBlur={onBlur} />
+                  {status === "error" && (
+                    <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.75rem", color: "#e57373" }}>Ошибка отправки. Попробуйте ещё раз.</p>
+                  )}
+                  <button type="submit" disabled={status === "loading"} className="btn-gold py-4 cursor-pointer" style={{ borderRadius: "2px", opacity: status === "loading" ? 0.7 : 1 }}>
+                    {status === "loading" ? "Отправляем..." : "Отправить заявку"}
+                  </button>
+                </form>
+              )}
             </div>
 
             <div className="flex flex-col gap-8">
