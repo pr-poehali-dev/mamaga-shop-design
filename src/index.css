@@ -127,6 +127,22 @@
   }
 }
 
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.4;
+  }
+  33% {
+    transform: translateY(-18px) translateX(8px);
+    opacity: 0.7;
+  }
+  66% {
+    transform: translateY(-8px) translateX(-6px);
+    opacity: 0.5;
+  }
+}
+
 @keyframes shimmer {
   0% {
     background-position: -200% center;
