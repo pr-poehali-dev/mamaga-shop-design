@@ -1,8 +1,8 @@
 import Icon from "@/components/ui/icon";
 
-const HERO_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/a5fd1402-d2f7-4bf5-ab13-8c879035c0cd.jpg";
-const WOOD_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/69192ff1-ef49-48af-ae42-b372e7ab926a.jpg";
-const MARBLE_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/61cb8446-b721-49a6-a9ad-db0ba501bd03.jpg";
+const HERO_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/e93c2ccd-1cf6-4059-82f1-e74aab891821.jpg";
+const WOOD_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/0b859a9e-8cca-4712-9284-c6b9628bb842.jpg";
+const MARBLE_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/d50a62b6-2324-4f9c-b1c6-4861301cdfe6.jpg";
 
 interface HeroSectionProps {
   scrollTo: (section: string) => void;
@@ -133,7 +133,7 @@ export default function HeroSection({ scrollTo }: HeroSectionProps) {
           <div className="gold-line my-8 animate-fade-in-up delay-200" style={{ opacity: 0, animationFillMode: "forwards" }} />
           <p className="animate-fade-in-up delay-300 leading-relaxed" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.1rem", color: "var(--cream-muted)", maxWidth: "440px", opacity: 0, animationFillMode: "forwards", fontStyle: "italic", lineHeight: 2 }}>
             Дерево помнит бурю. Камень — вечность.<br />Железо — волю того, кто держал его в огне.<br />
-            <span style={{ fontStyle: "normal", fontSize: "0.8rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--gold)", opacity: 0.7 }}>Мы соединяем всё троё.</span>
+            <span style={{ fontStyle: "normal", fontSize: "0.8rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--gold)", opacity: 0.7 }}>Творческий симбиоз — Веном природы.</span>
           </p>
           <div className="flex flex-wrap gap-4 mt-10 animate-fade-in-up delay-400" style={{ opacity: 0, animationFillMode: "forwards" }}>
             <button className="btn-gold px-8 py-4 cursor-pointer flex items-center gap-3" style={{ borderRadius: "2px" }} onClick={() => scrollTo("Каталог")}>
