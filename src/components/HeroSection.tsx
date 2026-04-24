@@ -166,8 +166,9 @@ export default function HeroSection({ scrollTo }: HeroSectionProps) {
               <img src={MARBLE_IMAGE} alt="marble" className="w-full h-full object-cover" />
             </div>
             <div className="absolute top-6 -right-6 px-4 py-3 animate-fade-in delay-500" style={{ opacity: 0, animationFillMode: "forwards", background: "rgba(13,11,8,0.9)", border: "1px solid rgba(201,168,76,0.3)", borderRadius: "2px" }}>
-              <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", color: "var(--gold)", textTransform: "uppercase" }}>Ручная работа</p>
-              <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.1rem", color: "var(--cream)" }}>с 2012 года</p>
+              <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", color: "var(--gold)", textTransform: "uppercase" }}>Мастерская</p>
+              <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.1rem", color: "var(--cream)" }}>с 2020 года</p>
+              <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.6rem", letterSpacing: "0.15em", color: "var(--cream-muted)", textTransform: "uppercase", marginTop: "2px" }}>Санкт-Петербург</p>
             </div>
           </div>
         </div>
