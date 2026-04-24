@@ -15,67 +15,65 @@ function authHeaders() {
   return { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` };
 }
 
-export const api = {
-  login: (password: string) => {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
-    return fetch(URLS.auth, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }), signal: controller.signal })
-      .then(r => r.json())
-      .finally(() => clearTimeout(timeout));
-  },
+function fetchWithTimeout(url: string, options: RequestInit = {}, ms = 15000) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), ms);
+  return fetch(url, { ...options, signal: controller.signal })
+    .then(r => r.json())
+    .finally(() => clearTimeout(timeout));
+}
 
-  checkAuth: () => {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
-    return fetch(URLS.auth, { headers: authHeaders(), signal: controller.signal })
-      .then(r => r.json())
-      .finally(() => clearTimeout(timeout));
-  },
+export const api = {
+  login: (password: string) =>
+    fetchWithTimeout(URLS.auth, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) }),
+
+  checkAuth: () =>
+    fetchWithTimeout(URLS.auth, { headers: authHeaders() }),
 
   getProducts: () =>
-    fetch(URLS.products, { headers: authHeaders() }).then(r => r.json()),
+    fetchWithTimeout(URLS.products, { headers: authHeaders() }),
 
   createProduct: (data: object) =>
-    fetch(URLS.products, { method: 'POST', headers: authHeaders(), body: JSON.stringify(data) }).then(r => r.json()),
+    fetchWithTimeout(URLS.products, { method: 'POST', headers: authHeaders(), body: JSON.stringify(data) }),
 
   updateProduct: (id: number, data: object) =>
-    fetch(`${URLS.products}?id=${id}`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(data) }).then(r => r.json()),
+    fetchWithTimeout(`${URLS.products}?id=${id}`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(data) }),
 
   deleteProduct: (id: number) =>
-    fetch(`${URLS.products}?id=${id}`, { method: 'DELETE', headers: authHeaders() }).then(r => r.json()),
+    fetchWithTimeout(`${URLS.products}?id=${id}`, { method: 'DELETE', headers: authHeaders() }),
 
   getPosts: () =>
-    fetch(URLS.blog, { headers: authHeaders() }).then(r => r.json()),
+    fetchWithTimeout(URLS.blog, { headers: authHeaders() }),
 
   createPost: (data: object) =>
-    fetch(URLS.blog, { method: 'POST', headers: authHeaders(), body: JSON.stringify(data) }).then(r => r.json()),
+    fetchWithTimeout(URLS.blog, { method: 'POST', headers: authHeaders(), body: JSON.stringify(data) }),
 
   updatePost: (id: number, data: object) =>
-    fetch(`${URLS.blog}?id=${id}`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(data) }).then(r => r.json()),
+    fetchWithTimeout(`${URLS.blog}?id=${id}`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(data) }),
 
   deletePost: (id: number) =>
-    fetch(`${URLS.blog}?id=${id}`, { method: 'DELETE', headers: authHeaders() }).then(r => r.json()),
+    fetchWithTimeout(`${URLS.blog}?id=${id}`, { method: 'DELETE', headers: authHeaders() }),
 
   getSettings: () =>
-    fetch(`${URLS.misc}?action=settings`).then(r => r.json()),
+    fetchWithTimeout(`${URLS.misc}?action=settings`, {}),
 
   saveSettings: (data: object) =>
-    fetch(`${URLS.misc}?action=settings`, { method: 'POST', headers: authHeaders(), body: JSON.stringify(data) }).then(r => r.json()),
+    fetchWithTimeout(`${URLS.misc}?action=settings`, { method: 'POST', headers: authHeaders(), body: JSON.stringify(data) }),
 
   uploadImage: (image: string, content_type: string, folder: string) =>
-    fetch(`${URLS.misc}?action=upload`, { method: 'POST', headers: authHeaders(), body: JSON.stringify({ image, content_type, folder }) }).then(r => r.json()),
+    fetchWithTimeout(`${URLS.misc}?action=upload`, { method: 'POST', headers: authHeaders(), body: JSON.stringify({ image, content_type, folder }) }),
 
   getMaterialPhotos: (slug: string) =>
-    fetch(`${URLS.misc}?action=material_photos&slug=${slug}`).then(r => r.json()),
+    fetchWithTimeout(`${URLS.misc}?action=material_photos&slug=${slug}`, {}),
 
   addMaterialPhoto: (slug: string, image: string, content_type: string, caption: string, price: number, description: string) =>
-    fetch(`${URLS.misc}?action=add_material_photo`, { method: 'POST', headers: authHeaders(), body: JSON.stringify({ slug, image, content_type, caption, price, description }) }).then(r => r.json()),
+    fetchWithTimeout(`${URLS.misc}?action=add_material_photo`, { method: 'POST', headers: authHeaders(), body: JSON.stringify({ slug, image, content_type, caption, price, description }) }),
 
   updateMaterialPhoto: (id: number, data: { caption: string; price: number; description: string }) =>
-    fetch(`${URLS.misc}?action=material_photo&id=${id}`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(data) }).then(r => r.json()),
+    fetchWithTimeout(`${URLS.misc}?action=material_photo&id=${id}`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(data) }),
 
   deleteMaterialPhoto: (id: number) =>
-    fetch(`${URLS.misc}?action=material_photo&id=${id}`, { method: 'DELETE', headers: authHeaders() }).then(r => r.json()),
+    fetchWithTimeout(`${URLS.misc}?action=material_photo&id=${id}`, { method: 'DELETE', headers: authHeaders() }),
 
   autopost: (data: {
     title?: string;
@@ -87,5 +85,5 @@ export const api = {
     caption?: string;
     site_url?: string;
   }) =>
-    fetch(`${URLS.misc}?action=autopost`, { method: 'POST', headers: authHeaders(), body: JSON.stringify(data) }).then(r => r.json()),
+    fetchWithTimeout(`${URLS.misc}?action=autopost`, { method: 'POST', headers: authHeaders(), body: JSON.stringify(data) }),
 };

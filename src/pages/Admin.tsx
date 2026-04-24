@@ -75,10 +75,14 @@ export default function Admin() {
 
   const loadAll = async () => {
     setLoading(true);
-    const [p, b, s] = await Promise.all([api.getProducts(), api.getPosts(), api.getSettings()]);
-    setProducts(p);
-    setPosts(b);
-    setSettings(s);
+    try {
+      const [p, b, s] = await Promise.all([api.getProducts(), api.getPosts(), api.getSettings()]);
+      setProducts(Array.isArray(p) ? p : []);
+      setPosts(Array.isArray(b) ? b : []);
+      setSettings(s && typeof s === 'object' ? s : {});
+    } catch {
+      // загрузились частично — показываем пустые данные
+    }
     setLoading(false);
   };
 
