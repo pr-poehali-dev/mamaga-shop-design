@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import CatalogSection from "@/components/CatalogSection";
@@ -29,6 +30,15 @@ export default function Index() {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--dark)", color: "var(--cream)" }}>
+      <Helmet>
+        <title>VKORNE — Столешницы и изделия из дерева, камня и металла. Санкт-Петербург</title>
+        <meta name="description" content="Мастерская VKORNE в Санкт-Петербурге. Столешницы из слэбов дерева, мрамора, гранита. Подстолья из металла, корнепластика. Ручная работа под заказ." />
+        <link rel="canonical" href="https://vkorne.space/" />
+        <meta property="og:title" content="VKORNE — Столешницы и изделия из природных материалов" />
+        <meta property="og:description" content="Мастерская природных материалов. Столешницы, полки и подстолья из дерева, металла и камня. Ручная работа, Санкт-Петербург." />
+        <meta property="og:url" content="https://vkorne.space/" />
+        <meta property="og:type" content="website" />
+      </Helmet>
       <Navbar
         activeSection={activeSection}
         mobileMenuOpen={mobileMenuOpen}
