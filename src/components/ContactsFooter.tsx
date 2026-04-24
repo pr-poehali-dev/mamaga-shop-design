@@ -3,7 +3,33 @@ import Icon from "@/components/ui/icon";
 
 const SEND_CONTACT_URL = "https://functions.poehali.dev/f06415d5-74ec-4511-bfc5-a38fd0ed38ce";
 
-export default function ContactsFooter() {
+interface Settings {
+  phone?: string;
+  email?: string;
+  telegram?: string;
+  whatsapp?: string;
+  vk?: string;
+  instagram?: string;
+  youtube?: string;
+  dzen?: string;
+  tiktok?: string;
+}
+
+interface ContactsFooterProps {
+  settings?: Settings;
+}
+
+const SOCIAL_LINKS: { key: keyof Settings; label: string; icon: string; color: string }[] = [
+  { key: 'vk',        label: 'ВКонтакте', icon: 'Users',      color: '#4680C2' },
+  { key: 'telegram',  label: 'Telegram',  icon: 'Send',        color: '#26A5E4' },
+  { key: 'whatsapp',  label: 'WhatsApp',  icon: 'MessageCircle', color: '#25D366' },
+  { key: 'instagram', label: 'Instagram', icon: 'Camera',      color: '#E1306C' },
+  { key: 'youtube',   label: 'YouTube',   icon: 'Play',        color: '#FF0000' },
+  { key: 'dzen',      label: 'Дзен',      icon: 'BookOpen',    color: '#FFCC00' },
+  { key: 'tiktok',    label: 'TikTok',    icon: 'Music',       color: '#EE1D52' },
+];
+
+export default function ContactsFooter({ settings = {} }: ContactsFooterProps) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -33,6 +59,11 @@ export default function ContactsFooter() {
   const inputStyle = { background: "rgba(255,255,255,0.03)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: "2px", padding: "14px 18px", fontFamily: "Montserrat, sans-serif", fontSize: "0.8rem", color: "var(--cream)", outline: "none", transition: "border-color 0.3s", width: "100%" };
   const onFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => (e.target.style.borderColor = "rgba(201,168,76,0.6)");
   const onBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => (e.target.style.borderColor = "rgba(201,168,76,0.2)");
+
+  const displayPhone = settings.phone || "+7 (921) 235-49-67";
+  const displayEmail = settings.email || "anisim4ik-10@yandex.ru";
+
+  const activeSocials = SOCIAL_LINKS.filter(s => settings[s.key]);
 
   return (
     <>
@@ -80,8 +111,8 @@ export default function ContactsFooter() {
               <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.6rem", fontWeight: 300 }}>Реквизиты</h3>
               {[
                 { icon: "MapPin", label: "Адрес", value: "Россия, Вологодская область, Сокольский район, д. Офимкино, дом 6" },
-                { icon: "Phone", label: "Телефон", value: "+7 (921) 235-49-67" },
-                { icon: "Mail", label: "E-mail", value: "anisim4ik-10@yandex.ru" },
+                { icon: "Phone", label: "Телефон", value: displayPhone, href: `tel:${displayPhone.replace(/\D/g, '')}` },
+                { icon: "Mail", label: "E-mail", value: displayEmail, href: `mailto:${displayEmail}` },
                 { icon: "Clock", label: "Режим работы", value: "Пн–Пт 9:00–19:00, Сб 10:00–16:00" },
               ].map((c) => (
                 <div key={c.label} className="flex items-start gap-5">
@@ -90,10 +121,60 @@ export default function ContactsFooter() {
                   </div>
                   <div>
                     <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", color: "var(--gold)", textTransform: "uppercase", marginBottom: "4px" }}>{c.label}</p>
-                    <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.85rem", color: "var(--cream)" }}>{c.value}</p>
+                    {'href' in c && c.href ? (
+                      <a href={c.href} style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.85rem", color: "var(--cream)", textDecoration: "none" }}
+                        onMouseEnter={e => (e.currentTarget.style.color = "var(--gold)")}
+                        onMouseLeave={e => (e.currentTarget.style.color = "var(--cream)")}
+                      >{c.value}</a>
+                    ) : (
+                      <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.85rem", color: "var(--cream)" }}>{c.value}</p>
+                    )}
                   </div>
                 </div>
               ))}
+
+              {/* Соцсети в блоке реквизитов */}
+              {activeSocials.length > 0 && (
+                <div>
+                  <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", color: "var(--gold)", textTransform: "uppercase", marginBottom: "14px" }}>Мы в сети</p>
+                  <div className="flex flex-wrap gap-3">
+                    {activeSocials.map(s => (
+                      <a
+                        key={s.key}
+                        href={settings[s.key]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={s.label}
+                        className="flex items-center gap-2 px-4 py-2 transition-all"
+                        style={{
+                          border: "1px solid rgba(201,168,76,0.2)",
+                          borderRadius: "2px",
+                          background: "rgba(255,255,255,0.03)",
+                          fontFamily: "Montserrat, sans-serif",
+                          fontSize: "0.7rem",
+                          letterSpacing: "0.1em",
+                          color: "var(--cream-muted)",
+                          textDecoration: "none",
+                          textTransform: "uppercase",
+                        }}
+                        onMouseEnter={e => {
+                          e.currentTarget.style.borderColor = s.color;
+                          e.currentTarget.style.color = s.color;
+                          e.currentTarget.style.background = `${s.color}11`;
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.style.borderColor = "rgba(201,168,76,0.2)";
+                          e.currentTarget.style.color = "var(--cream-muted)";
+                          e.currentTarget.style.background = "rgba(255,255,255,0.03)";
+                        }}
+                      >
+                        <Icon name={s.icon} size={14} fallback="Link" />
+                        {s.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="mt-4 p-6" style={{ background: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: "2px" }}>
                 <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.1rem", fontStyle: "italic", color: "var(--cream-muted)", lineHeight: 1.7 }}>
@@ -117,12 +198,29 @@ export default function ContactsFooter() {
           <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", letterSpacing: "0.1em", color: "var(--cream-muted)", opacity: 0.5 }}>
             © 2026 VKORNE. Все права защищены.
           </p>
-          <div className="flex gap-6">
-            {["ВКонтакте", "Telegram", "Дзен"].map((s) => (
-              <button key={s} className="nav-link" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--cream-muted)", background: "none", border: "none", cursor: "pointer" }}>
-                {s}
-              </button>
-            ))}
+          <div className="flex gap-4 flex-wrap justify-center">
+            {activeSocials.length > 0
+              ? activeSocials.map(s => (
+                  <a
+                    key={s.key}
+                    href={settings[s.key]}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={s.label}
+                    className="flex items-center gap-1.5 transition-colors"
+                    style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--cream-muted)", textDecoration: "none" }}
+                    onMouseEnter={e => (e.currentTarget.style.color = s.color)}
+                    onMouseLeave={e => (e.currentTarget.style.color = "var(--cream-muted)")}
+                  >
+                    <Icon name={s.icon} size={13} fallback="Link" />
+                    {s.label}
+                  </a>
+                ))
+              : ["ВКонтакте", "Telegram", "Дзен"].map((s) => (
+                  <span key={s} style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--cream-muted)", opacity: 0.4 }}>
+                    {s}
+                  </span>
+                ))}
           </div>
         </div>
       </footer>
