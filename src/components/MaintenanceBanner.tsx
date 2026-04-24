@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 export const MAINTENANCE_KEY = "vkorne_maintenance_mode";
 
@@ -15,6 +16,7 @@ export function useMaintenanceMode() {
 }
 
 export default function MaintenanceBanner() {
+  const { pathname } = useLocation();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -28,7 +30,7 @@ export default function MaintenanceBanner() {
     };
   }, []);
 
-  if (!visible || window.location.pathname.startsWith('/admin')) return null;
+  if (!visible || pathname.startsWith('/admin')) return null;
 
   return (
     <div
