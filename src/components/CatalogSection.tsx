@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PassportCard from '@/components/PassportCard';
 
 const WOOD_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/0b859a9e-8cca-4712-9284-c6b9628bb842.jpg";
@@ -41,6 +42,7 @@ interface Product {
 }
 
 export default function CatalogSection({ materialFilter, setMaterialFilter, styleFilter, setStyleFilter, priceFilter, setPriceFilter }: CatalogSectionProps) {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>(FALLBACK_PRODUCTS);
   const [passport, setPassport] = useState<Product | null>(null);
 
@@ -123,7 +125,7 @@ export default function CatalogSection({ materialFilter, setMaterialFilter, styl
               key={p.id}
               className="product-card group relative cursor-pointer"
               style={{ background: "var(--dark-3)", borderRadius: "2px", overflow: "hidden", border: "1px solid rgba(201,168,76,0.08)", transition: "border-color 0.3s" }}
-              onClick={() => setPassport(p)}
+              onClick={() => navigate(`/product/${p.id}`)}
               onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.35)")}
               onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.08)")}
             >
