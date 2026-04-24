@@ -28,7 +28,7 @@ export default function MaintenanceBanner() {
     };
   }, []);
 
-  if (!visible) return null;
+  if (!visible || window.location.pathname.startsWith('/admin')) return null;
 
   return (
     <div
