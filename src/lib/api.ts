@@ -16,8 +16,13 @@ function authHeaders() {
 }
 
 export const api = {
-  login: (password: string) =>
-    fetch(URLS.auth, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) }).then(r => r.json()),
+  login: (password: string) => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    return fetch(URLS.auth, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }), signal: controller.signal })
+      .then(r => r.json())
+      .finally(() => clearTimeout(timeout));
+  },
 
   checkAuth: () =>
     fetch(URLS.auth, { headers: authHeaders() }).then(r => r.json()),
