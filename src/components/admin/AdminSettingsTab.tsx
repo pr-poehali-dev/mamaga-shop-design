@@ -1,3 +1,6 @@
+import { useState, useEffect } from "react";
+import { MAINTENANCE_KEY } from "@/components/MaintenanceBanner";
+
 interface AdminSettingsTabProps {
   settings: Record<string, string>;
   setSettings: (s: Record<string, string>) => void;
@@ -45,9 +48,46 @@ export default function AdminSettingsTab({
   saveSettingsHandler,
   savingSettings,
 }: AdminSettingsTabProps) {
+  const [maintenance, setMaintenance] = useState(() => localStorage.getItem(MAINTENANCE_KEY) === "true");
+
+  useEffect(() => {
+    localStorage.setItem(MAINTENANCE_KEY, String(maintenance));
+  }, [maintenance]);
+
   return (
     <div>
       <h2 className="text-xl font-bold mb-6">Настройки сайта</h2>
+
+      <div className="bg-stone-800 border border-stone-700 rounded-xl p-6 mb-6">
+        <h3 className="text-sm font-semibold text-amber-400 uppercase tracking-widest mb-4">Режим паузы</h3>
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-stone-200 text-sm font-medium">
+              {maintenance ? "Сайт на паузе — клиенты видят баннер" : "Сайт работает в обычном режиме"}
+            </p>
+            <p className="text-stone-400 text-xs mt-1">
+              Включите, если временно не принимаете заказы. Вы продолжаете видеть сайт как обычно.
+            </p>
+          </div>
+          <button
+            onClick={() => setMaintenance(v => !v)}
+            className={`relative flex-shrink-0 w-14 h-7 rounded-full transition-colors duration-300 focus:outline-none ${
+              maintenance ? "bg-amber-600" : "bg-stone-600"
+            }`}
+          >
+            <span
+              className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full shadow transition-transform duration-300 ${
+                maintenance ? "translate-x-7" : "translate-x-0"
+              }`}
+            />
+          </button>
+        </div>
+        {maintenance && (
+          <div className="mt-4 p-3 bg-amber-900/30 border border-amber-700/40 rounded-lg text-xs text-amber-300">
+            Баннер активен. Новые клиенты видят сообщение о паузе. Чтобы снять — выключите переключатель выше.
+          </div>
+        )}
+      </div>
       <div className="flex flex-col gap-6">
         {SETTINGS_GROUPS.map(({ group, fields }) => (
           <div key={group} className="bg-stone-800 border border-stone-700 rounded-xl p-6">
