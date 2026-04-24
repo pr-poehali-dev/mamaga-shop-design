@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import Icon from '@/components/ui/icon';
+import { api } from '@/lib/api';
 
 interface Product {
   id: number;
@@ -19,6 +21,66 @@ interface AdminProductsTabProps {
   deleteProduct: (id: number) => void;
   onUploadImage: () => Promise<string>;
   emptyProduct: Omit<Product, 'id'>;
+}
+
+type PostStatus = 'idle' | 'loading' | 'ok' | 'error';
+
+function PostButton({ product }: { product: Product }) {
+  const [status, setStatus] = useState<PostStatus>('idle');
+  const [details, setDetails] = useState<Record<string, boolean>>({});
+
+  const handlePost = async () => {
+    setStatus('loading');
+    const res = await api.autopost({
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      material: product.material,
+      style: product.style,
+      image_url: product.image_url,
+    });
+    setStatus(res.ok ? 'ok' : 'error');
+    if (res.results) {
+      setDetails({
+        Telegram: res.results.telegram?.ok ?? false,
+        ВКонтакте: res.results.vk?.ok ?? false,
+      });
+    }
+    setTimeout(() => setStatus('idle'), 4000);
+  };
+
+  return (
+    <div className="flex flex-col items-end gap-1">
+      <button
+        onClick={handlePost}
+        disabled={status === 'loading'}
+        title="Опубликовать в соцсети"
+        className={`p-2 transition-colors ${
+          status === 'ok' ? 'text-green-400' :
+          status === 'error' ? 'text-red-400' :
+          'text-stone-400 hover:text-blue-400'
+        }`}
+      >
+        {status === 'loading'
+          ? <Icon name="Loader" size={16} />
+          : status === 'ok'
+          ? <Icon name="CheckCircle" size={16} />
+          : status === 'error'
+          ? <Icon name="XCircle" size={16} />
+          : <Icon name="Share2" size={16} />
+        }
+      </button>
+      {(status === 'ok' || status === 'error') && Object.keys(details).length > 0 && (
+        <div className="flex gap-1">
+          {Object.entries(details).map(([name, ok]) => (
+            <span key={name} className={`text-xs px-1.5 py-0.5 rounded ${ok ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'}`}>
+              {name}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function AdminProductsTab({
@@ -87,7 +149,8 @@ export default function AdminProductsTab({
               <div className="text-stone-400 text-sm mt-1">{p.material} · {p.style} · {p.price ? `${p.price.toLocaleString()} ₽` : 'цена не указана'}</div>
               {p.description && <div className="text-stone-500 text-xs mt-1 truncate max-w-md">{p.description}</div>}
             </div>
-            <div className="flex gap-2">
+            <div className="flex items-center gap-1">
+              <PostButton product={p} />
               <button onClick={() => setEditProduct(p)} className="text-stone-400 hover:text-amber-400 p-2"><Icon name="Pencil" size={16} /></button>
               <button onClick={() => deleteProduct(p.id)} className="text-stone-400 hover:text-red-400 p-2"><Icon name="Trash2" size={16} /></button>
             </div>

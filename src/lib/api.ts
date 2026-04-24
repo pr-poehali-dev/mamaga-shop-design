@@ -66,4 +66,16 @@ export const api = {
 
   deleteMaterialPhoto: (id: number) =>
     fetch(`${URLS.misc}?action=material_photo&id=${id}`, { method: 'DELETE', headers: authHeaders() }).then(r => r.json()),
+
+  autopost: (data: {
+    title?: string;
+    description?: string;
+    price?: number;
+    material?: string;
+    style?: string;
+    image_url?: string;
+    caption?: string;
+    site_url?: string;
+  }) =>
+    fetch(`${URLS.misc}?action=autopost`, { method: 'POST', headers: authHeaders(), body: JSON.stringify(data) }).then(r => r.json()),
 };

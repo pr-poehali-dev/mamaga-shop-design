@@ -1,5 +1,6 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import Icon from '@/components/ui/icon';
+import { api } from '@/lib/api';
 
 const MATERIAL_SLUGS = [
   { slug: 'derevo', name: 'Дерево', rune: 'ᚦ' },
@@ -34,6 +35,49 @@ interface AdminMaterialsTabProps {
   deleteMaterialPhoto: (id: number) => void;
   materialFileRef: React.RefObject<HTMLInputElement>;
   uploadMaterialPhoto: () => Promise<void>;
+}
+
+type PostStatus = 'idle' | 'loading' | 'ok' | 'error';
+
+function PhotoPostButton({ photo }: { photo: { id: number; url: string; caption: string; price: number; description: string } }) {
+  const [status, setStatus] = useState<PostStatus>('idle');
+  const [details, setDetails] = useState<Record<string, boolean>>({});
+
+  const handlePost = async () => {
+    setStatus('loading');
+    const res = await api.autopost({
+      caption: photo.caption,
+      description: photo.description,
+      price: photo.price,
+      image_url: photo.url,
+    });
+    setStatus(res.ok ? 'ok' : 'error');
+    if (res.results) {
+      setDetails({
+        Telegram: res.results.telegram?.ok ?? false,
+        ВКонтакте: res.results.vk?.ok ?? false,
+      });
+    }
+    setTimeout(() => setStatus('idle'), 4000);
+  };
+
+  return (
+    <button
+      onClick={handlePost}
+      disabled={status === 'loading'}
+      title="Опубликовать в соцсети"
+      className={`bg-stone-800 hover:bg-blue-700 text-white rounded-full w-7 h-7 flex items-center justify-center transition-colors ${
+        status === 'ok' ? '!bg-green-700' : status === 'error' ? '!bg-red-700' : ''
+      }`}
+    >
+      {status === 'loading'
+        ? <Icon name="Loader" size={11} fallback="Share2" />
+        : status === 'ok'
+        ? <Icon name="Check" size={11} fallback="Share2" />
+        : <Icon name="Share2" size={11} fallback="Share2" />
+      }
+    </button>
+  );
 }
 
 export default function AdminMaterialsTab({
@@ -160,6 +204,7 @@ export default function AdminMaterialsTab({
                 {photo.description && <p className="text-xs text-stone-500 truncate mt-0.5">{photo.description}</p>}
               </div>
               <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <PhotoPostButton photo={photo} />
                 <button
                   onClick={() => setEditingPhoto({ id: photo.id, caption: photo.caption, price: photo.price, description: photo.description })}
                   className="bg-stone-800 hover:bg-amber-700 text-white rounded-full w-7 h-7 flex items-center justify-center"

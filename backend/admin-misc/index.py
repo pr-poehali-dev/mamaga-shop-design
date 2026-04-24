@@ -6,9 +6,15 @@ import base64
 import boto3
 import uuid
 import psycopg2
+import urllib.request
+import urllib.parse
+import urllib.error
+import re
+
 
 def get_db():
     return psycopg2.connect(os.environ['DATABASE_URL'])
+
 
 def check_auth(event):
     token = event.get('headers', {}).get('X-Authorization', '').replace('Bearer ', '')
@@ -16,8 +22,165 @@ def check_auth(event):
     valid_token = hashlib.sha256(f"{admin_password}{int(time.time() // 86400)}".encode()).hexdigest()
     return token == valid_token
 
+
+# ── AUTOPOST ──────────────────────────────────────────────────────────────────
+
+def post_to_telegram(text: str, image_url: str | None) -> dict:
+    """Публикует пост в Telegram-канал через бота."""
+    bot_token = os.environ.get('TELEGRAM_BOT_TOKEN', '')
+    channel_id = os.environ.get('TELEGRAM_CHANNEL_ID', '')
+    if not bot_token or not channel_id:
+        return {'ok': False, 'error': 'Telegram не настроен'}
+
+    base = f"https://api.telegram.org/bot{bot_token}"
+    if image_url:
+        url = f"{base}/sendPhoto"
+        payload = {'chat_id': channel_id, 'photo': image_url, 'caption': text, 'parse_mode': 'HTML'}
+    else:
+        url = f"{base}/sendMessage"
+        payload = {'chat_id': channel_id, 'text': text, 'parse_mode': 'HTML'}
+
+    data = json.dumps(payload).encode('utf-8')
+    req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            result = json.loads(resp.read())
+            return {'ok': result.get('ok', False)}
+    except urllib.error.HTTPError as e:
+        return {'ok': False, 'error': e.read().decode('utf-8')}
+    except Exception as e:
+        return {'ok': False, 'error': str(e)}
+
+
+def upload_photo_to_vk(image_url: str, group_id: str, token: str) -> str | None:
+    """Загружает фото по URL на серверы ВК и возвращает attachment-строку."""
+    params = urllib.parse.urlencode({'group_id': group_id, 'access_token': token, 'v': '5.131'})
+    with urllib.request.urlopen(f"https://api.vk.com/method/photos.getWallUploadServer?{params}", timeout=10) as r:
+        data = json.loads(r.read())
+    upload_url = data.get('response', {}).get('upload_url')
+    if not upload_url:
+        return None
+
+    with urllib.request.urlopen(image_url, timeout=15) as img_resp:
+        img_bytes = img_resp.read()
+        content_type = img_resp.headers.get('Content-Type', 'image/jpeg')
+
+    boundary = '----VKBoundary' + hashlib.md5(img_bytes[:64]).hexdigest()
+    ext = content_type.split('/')[-1].replace('jpeg', 'jpg')
+    body = (
+        f'--{boundary}\r\nContent-Disposition: form-data; name="photo"; filename="photo.{ext}"\r\n'
+        f'Content-Type: {content_type}\r\n\r\n'
+    ).encode() + img_bytes + f'\r\n--{boundary}--\r\n'.encode()
+
+    req2 = urllib.request.Request(upload_url, data=body,
+                                  headers={'Content-Type': f'multipart/form-data; boundary={boundary}'})
+    with urllib.request.urlopen(req2, timeout=20) as r2:
+        upload_result = json.loads(r2.read())
+
+    save_params = urllib.parse.urlencode({
+        'group_id': group_id,
+        'photo': upload_result.get('photo', ''),
+        'server': upload_result.get('server', ''),
+        'hash': upload_result.get('hash', ''),
+        'access_token': token,
+        'v': '5.131',
+    })
+    with urllib.request.urlopen(f"https://api.vk.com/method/photos.saveWallPhoto?{save_params}", timeout=10) as r3:
+        save_result = json.loads(r3.read())
+
+    photos = save_result.get('response', [])
+    if not photos:
+        return None
+    p = photos[0]
+    return f"photo{p['owner_id']}_{p['id']}"
+
+
+def post_to_vk(text: str, image_url: str | None) -> dict:
+    """Публикует пост в группу ВКонтакте."""
+    token = os.environ.get('VK_ACCESS_TOKEN', '')
+    group_id = os.environ.get('VK_GROUP_ID', '')
+    if not token or not group_id:
+        return {'ok': False, 'error': 'ВКонтакте не настроен'}
+
+    attachments = ''
+    if image_url:
+        try:
+            attachment = upload_photo_to_vk(image_url, group_id, token)
+            if attachment:
+                attachments = attachment
+        except Exception:
+            pass
+
+    params_dict = {
+        'owner_id': f'-{group_id}',
+        'from_group': '1',
+        'message': text,
+        'access_token': token,
+        'v': '5.131',
+    }
+    if attachments:
+        params_dict['attachments'] = attachments
+
+    req = urllib.request.Request(
+        f"https://api.vk.com/method/wall.post?{urllib.parse.urlencode(params_dict)}"
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            result = json.loads(resp.read())
+            if 'error' in result:
+                return {'ok': False, 'error': result['error'].get('error_msg', 'VK error')}
+            return {'ok': True, 'post_id': result.get('response', {}).get('post_id')}
+    except Exception as e:
+        return {'ok': False, 'error': str(e)}
+
+
+def handle_autopost(body: dict) -> dict:
+    """Формирует текст поста и рассылает в Telegram + ВК."""
+    title = body.get('title', '').strip()
+    description = body.get('description', '').strip()
+    price = body.get('price')
+    material = body.get('material', '').strip()
+    style = body.get('style', '').strip()
+    image_url = body.get('image_url', '').strip() or None
+    caption = body.get('caption', '').strip()
+    site_url = body.get('site_url', 'https://vkorne.space').strip()
+
+    if title:
+        lines = [f'<b>{title}</b>']
+        if description:
+            lines.append(description)
+        if material or style:
+            lines.append(f'<i>{" · ".join(filter(None, [material, style]))}</i>')
+        if price:
+            lines.append(f'💰 {int(price):,} ₽'.replace(',', '\u00a0'))
+        lines.append(f'\n🌿 <a href="{site_url}">vkorne.space</a>')
+        text_html = '\n'.join(lines)
+    elif caption:
+        lines = [f'<b>{caption}</b>']
+        if description:
+            lines.append(description)
+        if price:
+            lines.append(f'💰 {int(price):,} ₽'.replace(',', '\u00a0'))
+        lines.append(f'\n🌿 <a href="{site_url}">vkorne.space</a>')
+        text_html = '\n'.join(lines)
+    else:
+        return {'ok': False, 'error': 'Нет данных для поста'}
+
+    # plain text для ВК (без HTML-тегов)
+    text_plain = re.sub(r'<[^>]+>', '', text_html)
+
+    results = {
+        'telegram': post_to_telegram(text_html, image_url),
+        'vk': post_to_vk(text_plain, image_url),
+    }
+    all_ok = all(r.get('ok') for r in results.values())
+    return {'ok': all_ok, 'results': results}
+
+
+# ── MAIN HANDLER ──────────────────────────────────────────────────────────────
+
 def handler(event: dict, context) -> dict:
-    """Настройки сайта, загрузка изображений и управление галереями материалов"""
+    """Настройки сайта, загрузка изображений, галереи материалов и автопостинг в соцсети."""
     cors_headers = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -58,6 +221,11 @@ def handler(event: dict, context) -> dict:
         return {'statusCode': 401, 'headers': cors_headers, 'body': json.dumps({'error': 'Нет доступа'})}
 
     body = json.loads(event.get('body') or '{}')
+
+    # POST автопостинг в соцсети
+    if event.get('httpMethod') == 'POST' and action == 'autopost':
+        result = handle_autopost(body)
+        return {'statusCode': 200, 'headers': cors_headers, 'body': json.dumps(result)}
 
     # POST настройки
     if event.get('httpMethod') == 'POST' and action == 'settings':
@@ -140,7 +308,7 @@ def handler(event: dict, context) -> dict:
 
         return {'statusCode': 200, 'headers': cors_headers, 'body': json.dumps({'ok': True, 'id': new_id, 'url': cdn_url})}
 
-    # PUT обновить поля фото материала (цена, описание, подпись)
+    # PUT обновить поля фото материала
     if event.get('httpMethod') == 'PUT' and action == 'material_photo':
         photo_id = params.get('id')
         if not photo_id:
