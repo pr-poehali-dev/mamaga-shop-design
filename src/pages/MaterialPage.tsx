@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { api } from "@/lib/api";
 import Icon from "@/components/ui/icon";
 import PassportCard from "@/components/PassportCard";
@@ -22,6 +23,8 @@ interface MaterialConfig {
   accentColor: string;
   overlayColor: string;
   photos: Photo[];
+  seoTitle: string;
+  seoDescription: string;
 }
 
 const MATERIALS: Record<string, MaterialConfig> = {
@@ -35,6 +38,8 @@ const MATERIALS: Record<string, MaterialConfig> = {
     accentColor: "#8B5E3C",
     overlayColor: "rgba(20,10,5,0.75)",
     photos: [],
+    seoTitle: "Столешницы и изделия из дерева на заказ — VKORNE, Москва",
+    seoDescription: "Столешницы из слэбов дуба, ореха и карагача. Ручная работа, уникальный рисунок. Изготовление на заказ в Москве. Мастерская VKORNE.",
   },
   zhelezo: {
     name: "Железо",
@@ -46,6 +51,8 @@ const MATERIALS: Record<string, MaterialConfig> = {
     accentColor: "#7A6040",
     overlayColor: "rgba(10,8,5,0.80)",
     photos: [],
+    seoTitle: "Изделия из металла на заказ: подстолья, полки, кованые элементы — VKORNE",
+    seoDescription: "Подстолья, полки и декоративные элементы из кованой стали, латуни и бронзы. Ручная ковка, патинирование. Мастерская VKORNE, Москва.",
   },
   kamen: {
     name: "Камень",
@@ -57,6 +64,8 @@ const MATERIALS: Record<string, MaterialConfig> = {
     accentColor: "#6B7B8D",
     overlayColor: "rgba(5,8,12,0.80)",
     photos: [],
+    seoTitle: "Столешницы из мрамора, гранита и оникса на заказ — VKORNE, Москва",
+    seoDescription: "Столешницы из мрамора Calacatta, гранита и оникса. Итальянский камень, полировка зеркало. Изготовление на заказ. Мастерская VKORNE.",
   },
   korneplastika: {
     name: "Корнепластика",
@@ -68,6 +77,8 @@ const MATERIALS: Record<string, MaterialConfig> = {
     accentColor: "#5A7A4A",
     overlayColor: "rgba(5,10,5,0.78)",
     photos: [],
+    seoTitle: "Корнепластика — уникальные изделия из корней деревьев на заказ — VKORNE",
+    seoDescription: "Мебель и скульптуры из корней деревьев — природная форма, ручная обработка. Уникальные изделия на заказ. Мастерская VKORNE, Москва.",
   },
 };
 
@@ -101,6 +112,18 @@ export default function MaterialPage({ materialSlug }: MaterialPageProps) {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--dark)" }}>
+      <Helmet>
+        <title>{material.seoTitle}</title>
+        <meta name="description" content={material.seoDescription} />
+        <link rel="canonical" href={`https://vkorne.space/material/${material.slug}`} />
+        <meta property="og:title" content={material.seoTitle} />
+        <meta property="og:description" content={material.seoDescription} />
+        <meta property="og:url" content={`https://vkorne.space/material/${material.slug}`} />
+        <meta property="og:image" content={material.bgImage} />
+        <meta name="twitter:title" content={material.seoTitle} />
+        <meta name="twitter:description" content={material.seoDescription} />
+        <meta name="twitter:image" content={material.bgImage} />
+      </Helmet>
 
       {/* Hero */}
       <div className="relative h-screen flex items-center justify-center overflow-hidden">
