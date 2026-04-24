@@ -24,8 +24,13 @@ export const api = {
       .finally(() => clearTimeout(timeout));
   },
 
-  checkAuth: () =>
-    fetch(URLS.auth, { headers: authHeaders() }).then(r => r.json()),
+  checkAuth: () => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    return fetch(URLS.auth, { headers: authHeaders(), signal: controller.signal })
+      .then(r => r.json())
+      .finally(() => clearTimeout(timeout));
+  },
 
   getProducts: () =>
     fetch(URLS.products, { headers: authHeaders() }).then(r => r.json()),

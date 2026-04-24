@@ -63,7 +63,7 @@ export default function Admin() {
     api.checkAuth().then(res => {
       if (!res.ok) { navigate('/admin/login'); return; }
       loadAll();
-    });
+    }).catch(() => navigate('/admin/login'));
   }, []);
 
   useEffect(() => {
