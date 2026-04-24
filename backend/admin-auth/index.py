@@ -17,7 +17,7 @@ def handler(event: dict, context) -> dict:
     if event.get('httpMethod') == 'POST':
         body = json.loads(event.get('body') or '{}')
         password = body.get('password', '')
-        admin_password = os.environ.get('ADMIN_PASSWORD', '')
+        admin_password = os.environ.get('ADMIN_PASSWORD', '-vkorne-')
 
         if password == admin_password:
             token = hashlib.sha256(f"{admin_password}{int(time.time() // 86400)}".encode()).hexdigest()
@@ -34,7 +34,7 @@ def handler(event: dict, context) -> dict:
 
     if event.get('httpMethod') == 'GET':
         token = event.get('headers', {}).get('X-Authorization', '').replace('Bearer ', '')
-        admin_password = os.environ.get('ADMIN_PASSWORD', '')
+        admin_password = os.environ.get('ADMIN_PASSWORD', '-vkorne-')
         valid_token = hashlib.sha256(f"{admin_password}{int(time.time() // 86400)}".encode()).hexdigest()
         if token == valid_token:
             return {'statusCode': 200, 'headers': cors_headers, 'body': json.dumps({'ok': True})}
