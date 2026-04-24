@@ -17,15 +17,22 @@ export default function AdminLogin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    handleClear();
+    localStorage.clear();
+    sessionStorage.clear();
+    setError('');
     setLoading(true);
-    const res = await api.login(password);
-    setLoading(false);
-    if (res.ok) {
-      localStorage.setItem(TOKEN_KEY, res.token);
-      navigate('/admin');
-    } else {
-      setError('Неверный пароль');
+    try {
+      const res = await api.login(password);
+      setLoading(false);
+      if (res.ok) {
+        localStorage.setItem(TOKEN_KEY, res.token);
+        navigate('/admin');
+      } else {
+        setError('Неверный пароль');
+      }
+    } catch {
+      setLoading(false);
+      setError('Ошибка соединения, попробуй ещё раз');
     }
   };
 
