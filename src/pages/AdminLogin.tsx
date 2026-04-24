@@ -8,10 +8,17 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const handleClear = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    setError('');
+    setPassword('');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    handleClear();
     setLoading(true);
-    setError('');
     const res = await api.login(password);
     setLoading(false);
     if (res.ok) {
