@@ -60,10 +60,9 @@ export default function Admin() {
   const [savingPhoto, setSavingPhoto] = useState(false);
 
   useEffect(() => {
-    api.checkAuth().then(res => {
-      if (!res.ok) { navigate('/admin/login'); return; }
-      loadAll();
-    }).catch(() => navigate('/admin/login'));
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) { navigate('/admin/login'); return; }
+    loadAll();
   }, []);
 
   useEffect(() => {
