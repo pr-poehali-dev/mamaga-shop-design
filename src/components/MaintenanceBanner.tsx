@@ -23,11 +23,7 @@ export default function MaintenanceBanner() {
     const check = () => setVisible(localStorage.getItem(MAINTENANCE_KEY) === "true");
     check();
     window.addEventListener("storage", check);
-    const interval = setInterval(check, 500);
-    return () => {
-      window.removeEventListener("storage", check);
-      clearInterval(interval);
-    };
+    return () => window.removeEventListener("storage", check);
   }, []);
 
   if (!visible || pathname.startsWith('/admin')) return null;

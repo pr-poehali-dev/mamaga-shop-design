@@ -64,8 +64,6 @@ const BLOG_POSTS = [
 ];
 
 interface ContentSectionsProps {
-  openMyth: number | null;
-  setOpenMyth: (i: number | null) => void;
   scrollTo: (section: string) => void;
 }
 

@@ -8,6 +8,17 @@ interface HeroSectionProps {
   scrollTo: (section: string) => void;
 }
 
+const PARTICLES = [
+  { left: "15%", top: "30%", size: 2, delay: "0s", dur: "6s" },
+  { left: "25%", top: "60%", size: 1.5, delay: "1s", dur: "8s" },
+  { left: "70%", top: "25%", size: 2, delay: "2s", dur: "7s" },
+  { left: "80%", top: "55%", size: 1, delay: "0.5s", dur: "9s" },
+  { left: "45%", top: "70%", size: 1.5, delay: "3s", dur: "6s" },
+  { left: "55%", top: "40%", size: 1, delay: "1.5s", dur: "10s" },
+  { left: "35%", top: "20%", size: 2, delay: "2.5s", dur: "7s" },
+  { left: "88%", top: "35%", size: 1.5, delay: "4s", dur: "8s" },
+];
+
 export default function HeroSection({ scrollTo }: HeroSectionProps) {
   return (
     <section id="Главная" className="relative min-h-screen flex items-center overflow-hidden" style={{ paddingTop: "64px" }}>
@@ -100,16 +111,7 @@ export default function HeroSection({ scrollTo }: HeroSectionProps) {
 
       {/* Частицы / споры */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {[
-          { left: "15%", top: "30%", size: 2, delay: "0s", dur: "6s" },
-          { left: "25%", top: "60%", size: 1.5, delay: "1s", dur: "8s" },
-          { left: "70%", top: "25%", size: 2, delay: "2s", dur: "7s" },
-          { left: "80%", top: "55%", size: 1, delay: "0.5s", dur: "9s" },
-          { left: "45%", top: "70%", size: 1.5, delay: "3s", dur: "6s" },
-          { left: "55%", top: "40%", size: 1, delay: "1.5s", dur: "10s" },
-          { left: "35%", top: "20%", size: 2, delay: "2.5s", dur: "7s" },
-          { left: "88%", top: "35%", size: 1.5, delay: "4s", dur: "8s" },
-        ].map((p, i) => (
+        {PARTICLES.map((p, i) => (
           <div key={i} className="absolute rounded-full" style={{
             left: p.left, top: p.top,
             width: `${p.size * 2}px`, height: `${p.size * 2}px`,

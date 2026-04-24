@@ -54,11 +54,7 @@ export default function Index() {
         priceFilter={priceFilter}
         setPriceFilter={setPriceFilter}
       />
-      <ContentSections
-        openMyth={null}
-        setOpenMyth={() => {}}
-        scrollTo={scrollTo}
-      />
+      <ContentSections scrollTo={scrollTo} />
       <ContactsFooter settings={settings} />
     </div>
   );
