@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '@/lib/api';
+import PassportCard from '@/components/PassportCard';
 
 const WOOD_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/0b859a9e-8cca-4712-9284-c6b9628bb842.jpg";
 const MARBLE_IMAGE = "https://cdn.poehali.dev/projects/b2e86887-0b17-4b4c-8739-174a406118f0/files/d50a62b6-2324-4f9c-b1c6-4861301cdfe6.jpg";
@@ -44,6 +45,7 @@ interface Product {
 export default function CatalogSection({ materialFilter, setMaterialFilter, styleFilter, setStyleFilter, priceFilter, setPriceFilter }: CatalogSectionProps) {
   const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>(FALLBACK_PRODUCTS);
+  const [passport, setPassport] = useState<Product | null>(null);
 
   useEffect(() => {
     api.getProducts()
