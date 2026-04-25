@@ -126,6 +126,7 @@ export default function HeroSection({ scrollTo }: HeroSectionProps) {
       {/* Основной контент */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-24 grid lg:grid-cols-2 gap-16 items-center">
         <div>
+          <p className="section-label mb-3 animate-fade-in-up" style={{ opacity: 0, animationFillMode: "forwards", fontSize: "0.65rem", letterSpacing: "0.2em", color: "var(--gold)" }}>Мастерская · Санкт-Петербург</p>
           <p className="section-label mb-6 animate-fade-in-up" style={{ opacity: 0, animationFillMode: "forwards" }}>Корнепластика · Дерево · Камень · Железо</p>
           <h1 className="animate-fade-in-up delay-100" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(3rem, 6vw, 5.5rem)", lineHeight: 1.05, fontWeight: 300, opacity: 0, animationFillMode: "forwards" }}>
             Там, где<br />
