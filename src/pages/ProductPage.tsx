@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Icon from "@/components/ui/icon";
+import { api } from "@/lib/api";
 
 interface Product {
   id: number;
@@ -36,8 +37,7 @@ export default function ProductPage() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    fetch("https://functions.poehali.dev/dbf58220-06f5-4ed4-a81f-28376a0939fe")
-      .then(r => r.json())
+    api.getProducts()
       .then((data: Product[]) => {
         const list = Array.isArray(data) && data.length > 0 ? data : FALLBACK;
         const found = list.find(p => String(p.id) === id);
@@ -84,8 +84,12 @@ export default function ProductPage() {
       <Helmet>
         <title>{product.title} — VKORNE, Санкт-Петербург</title>
         <meta name="description" content={product.description || `${product.title}. Ручная работа. Мастерская VKORNE, Санкт-Петербург.`} />
+        <link rel="canonical" href={`https://vkorne.space/product/${id}`} />
         <meta property="og:title" content={`${product.title} — VKORNE`} />
+        <meta property="og:description" content={product.description || `${product.title}. Ручная работа. Мастерская VKORNE, Санкт-Петербург.`} />
+        <meta property="og:url" content={`https://vkorne.space/product/${id}`} />
         <meta property="og:image" content={product.image_url} />
+        <meta property="og:type" content="product" />
       </Helmet>
 
       {/* Hero */}

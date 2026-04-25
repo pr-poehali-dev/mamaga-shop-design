@@ -2,32 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://vkorne.space/</loc>
-    <lastmod>2026-04-24</lastmod>
+    <lastmod>2026-04-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://vkorne.space/material/derevo</loc>
-    <lastmod>2026-04-24</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-04-25</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://vkorne.space/material/zhelezo</loc>
-    <lastmod>2026-04-24</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-04-25</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://vkorne.space/material/kamen</loc>
-    <lastmod>2026-04-24</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-04-25</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://vkorne.space/material/korneplastika</loc>
-    <lastmod>2026-04-24</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-04-25</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 </urlset>
