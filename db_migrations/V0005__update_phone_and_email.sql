@@ -1,0 +1,2 @@
+UPDATE t_p1575559_mamaga_shop_design.site_settings SET value = '+7 (921) 235-49-67' WHERE key = 'phone';
+UPDATE t_p1575559_mamaga_shop_design.site_settings SET value = 'anisim4ik-10@yandex.ru' WHERE key = 'email';
