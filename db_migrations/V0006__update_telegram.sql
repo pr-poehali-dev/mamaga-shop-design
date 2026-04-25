@@ -1,0 +1,1 @@
+UPDATE t_p1575559_mamaga_shop_design.site_settings SET value = 'https://t.me/vkornevkorne' WHERE key = 'telegram';
