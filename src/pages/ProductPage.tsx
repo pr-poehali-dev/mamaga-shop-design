@@ -35,6 +35,16 @@ export default function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const ymGoal = (goal: string, params?: Record<string, unknown>) => {
+    try {
+      const w = window as unknown as Record<string, (...args: unknown[]) => void>;
+      if (typeof w['ym'] === 'function') {
+        w['ym'](108756174, 'reachGoal', goal, params);
+        w['ym'](108770703, 'reachGoal', goal, params);
+      }
+    } catch (e) { void e; }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     api.getProducts()
@@ -42,6 +52,11 @@ export default function ProductPage() {
         const list = Array.isArray(data) && data.length > 0 ? data : FALLBACK;
         const found = list.find(p => String(p.id) === id);
         setProduct(found || null);
+        if (found) {
+          const w = window as unknown as { dataLayer?: unknown[] };
+          w.dataLayer = w.dataLayer || [];
+          w.dataLayer.push({ ecommerce: { detail: { products: [{ id: String(found.id), name: found.title, price: found.price, category: found.material }] } } });
+        }
       })
       .catch(() => {
         const found = FALLBACK.find(p => String(p.id) === id);
@@ -161,7 +176,7 @@ export default function ProductPage() {
             </div>
           </div>
           <button
-            onClick={scrollToContacts}
+            onClick={() => { ymGoal('discuss_order', { product: product.title }); scrollToContacts(); }}
             className="btn-gold px-10 py-4 flex items-center gap-3 mx-auto"
             style={{ borderRadius: "2px", fontFamily: "Montserrat, sans-serif", fontSize: "0.7rem", letterSpacing: "0.2em", textTransform: "uppercase", cursor: "pointer" }}
           >

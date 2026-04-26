@@ -130,7 +130,7 @@ export default function CatalogSection({ materialFilter, setMaterialFilter, styl
               onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.08)")}
             >
               <div className="h-56 overflow-hidden relative">
-                <img src={p.image_url} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                <img src={p.image_url} alt={p.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center" style={{ background: "rgba(13,11,8,0.5)" }}>
                   <span style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", border: "1px solid rgba(201,168,76,0.5)", padding: "8px 16px", borderRadius: "2px" }}>
                     Паспорт изделия

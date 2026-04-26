@@ -44,6 +44,8 @@ export default function PassportCard({ image, title, description, price, materia
             <img
               src={image}
               alt={title}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover"
               style={{ minHeight: "340px" }}
             />

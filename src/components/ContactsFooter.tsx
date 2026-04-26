@@ -36,6 +36,16 @@ export default function ContactsFooter({ settings = {} }: ContactsFooterProps) {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
+  const ymGoal = (goal: string) => {
+    try {
+      const w = window as unknown as Record<string, (...args: unknown[]) => void>;
+      if (typeof w['ym'] === 'function') {
+        w['ym'](108756174, 'reachGoal', goal);
+        w['ym'](108770703, 'reachGoal', goal);
+      }
+    } catch (e) { void e; }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("loading");
@@ -48,6 +58,7 @@ export default function ContactsFooter({ settings = {} }: ContactsFooterProps) {
       if (res.ok) {
         setStatus("success");
         setName(""); setPhone(""); setEmail(""); setMessage("");
+        ymGoal('send_form');
       } else {
         setStatus("error");
       }
@@ -125,6 +136,10 @@ export default function ContactsFooter({ settings = {} }: ContactsFooterProps) {
                       <a href={c.href} style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.85rem", color: "var(--cream)", textDecoration: "none" }}
                         onMouseEnter={e => (e.currentTarget.style.color = "var(--gold)")}
                         onMouseLeave={e => (e.currentTarget.style.color = "var(--cream)")}
+                        onClick={() => {
+                          if (c.href?.startsWith('tel:')) ymGoal('click_phone');
+                          if (c.href?.startsWith('mailto:')) ymGoal('click_email');
+                        }}
                       >{c.value}</a>
                     ) : (
                       <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.85rem", color: "var(--cream)" }}>{c.value}</p>
